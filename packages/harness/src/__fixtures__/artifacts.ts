@@ -42,10 +42,14 @@ export const validICPProposal: ICPProposal = {
 };
 
 export const validProductBrief: ProductBrief = {
-  valueProposition: "Fresh meal kits delivered weekly",
+  valueProposition:
+    "Fresh organic meal kits delivered weekly to busy families seeking convenient nutrition",
   differentiators: ["Organic ingredients", "15-minute prep"],
-  toneGuidance: "Warm, practical, family-friendly",
-  keyMessages: ["Save time without sacrificing nutrition"],
+  toneGuidance: "Warm, practical, and family-friendly professional voice",
+  keyMessages: [
+    "Save time without sacrificing nutrition for busy parents",
+    "Help millennial parents cook healthy meals in 15 minutes",
+  ],
 };
 
 export const validCreatorCandidates: CreatorCandidates = {

@@ -14,8 +14,16 @@ export const ProfessionalismFeedbackSchema = z.object({
   draftsToRevise: z.array(z.string()),
 });
 
+export const ProductUnclearFeedbackSchema = z.object({
+  kind: z.literal("product_unclear"),
+  missingFields: z.array(z.string()),
+  vagueFields: z.array(z.string()),
+  hint: z.string(),
+});
+
 export const CheckpointFeedbackSchema = z.discriminatedUnion("kind", [
   ProfessionalismFeedbackSchema,
+  ProductUnclearFeedbackSchema,
   z.object({
     kind: z.literal("checkpoint_fail"),
     checkpointId: z.string(),
@@ -41,6 +49,9 @@ export type BudgetExceededFeedback = z.infer<
 >;
 export type ProfessionalismFeedback = z.infer<
   typeof ProfessionalismFeedbackSchema
+>;
+export type ProductUnclearFeedback = z.infer<
+  typeof ProductUnclearFeedbackSchema
 >;
 export type GuardrailFeedback = z.infer<typeof GuardrailFeedbackSchema>;
 export type CheckpointFeedback = z.infer<typeof CheckpointFeedbackSchema>;
