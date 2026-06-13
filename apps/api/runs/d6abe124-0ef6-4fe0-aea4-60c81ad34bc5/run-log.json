@@ -1,0 +1,35 @@
+{
+  "runId": "d6abe124-0ef6-4fe0-aea4-60c81ad34bc5",
+  "stages": [
+    {
+      "stage": "icp",
+      "durationMs": 6210,
+      "llmCalls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "estimatedCostUsd": 0,
+      "toolCalls": [],
+      "checkpoint": {
+        "id": "CP0",
+        "passed": true
+      }
+    },
+    {
+      "stage": "product",
+      "durationMs": 3182,
+      "llmCalls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "estimatedCostUsd": 0,
+      "toolCalls": [],
+      "checkpoint": {
+        "id": "CP1",
+        "passed": true
+      }
+    }
+  ],
+  "totalInputTokens": 2604,
+  "totalOutputTokens": 592,
+  "totalEstimatedCostUsd": 0.0007458,
+  "alarms": []
+}

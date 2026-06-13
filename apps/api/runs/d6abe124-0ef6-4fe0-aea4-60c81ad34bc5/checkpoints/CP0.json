@@ -1,0 +1,15 @@
+{
+  "id": "CP0",
+  "passed": true,
+  "at": "2026-06-13T21:13:37.070Z",
+  "criteria": "CP0",
+  "details": {
+    "evidenceSourceTypes": [
+      "client_brief",
+      "web_search_category",
+      "web_search_competitor",
+      "creator_graph"
+    ],
+    "segmentCount": 1
+  }
+}

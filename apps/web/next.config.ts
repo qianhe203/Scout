@@ -11,10 +11,17 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   outputFileTracingRoot: path.join(root, "../.."),
   async rewrites() {
+    // Proxy harness API only — never /runs/:id (that's the Next.js run page).
     return [
       { source: "/health", destination: `${internalApiOrigin}/health` },
-      { source: "/runs", destination: `${internalApiOrigin}/runs` },
-      { source: "/runs/:path*", destination: `${internalApiOrigin}/runs/:path*` },
+      {
+        source: "/api/harness/runs",
+        destination: `${internalApiOrigin}/runs`,
+      },
+      {
+        source: "/api/harness/runs/:path*",
+        destination: `${internalApiOrigin}/runs/:path*`,
+      },
     ];
   },
 };

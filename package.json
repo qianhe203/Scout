@@ -8,7 +8,7 @@
     "build": "pnpm -r build",
     "build:api": "pnpm --filter @scout/shared build && pnpm --filter @scout/harness build && pnpm --filter @scout/workers build && pnpm --filter api build",
     "build:web": "pnpm --filter @scout/shared build && pnpm --filter web build",
-    "build:railway": "pnpm run build:api && NEXT_PUBLIC_HARNESS_API_URL= pnpm run build:web",
+    "build:railway": "pnpm run build:api && NEXT_PUBLIC_HARNESS_API_URL=/api/harness pnpm run build:web",
     "start:railway": "node scripts/start-railway.mjs",
     "typecheck": "pnpm -r typecheck",
     "test": "vitest run",

@@ -1,3 +1,4 @@
+/** Harness API base — local dev uses :3001; Railway combined deploy uses /api/harness proxy. */
 export const API_BASE =
   process.env.NEXT_PUBLIC_HARNESS_API_URL ?? "http://localhost:3001";
 
