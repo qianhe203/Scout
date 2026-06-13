@@ -5,7 +5,17 @@ import { fileURLToPath } from "node:url";
 
 const rootDir = join(dirname(fileURLToPath(import.meta.url)), "..");
 const webPort = process.env.PORT ?? "3000";
-const apiPort = process.env.INTERNAL_API_PORT ?? "3001";
+
+/** Internal Hono port — must differ from Railway's public PORT. */
+function resolveInternalApiPort(publicPort) {
+  let apiPort = process.env.INTERNAL_API_PORT ?? "8787";
+  if (apiPort === publicPort) {
+    apiPort = "8787";
+  }
+  return apiPort;
+}
+
+const apiPort = resolveInternalApiPort(webPort);
 
 function start(name, command, args, extraEnv = {}) {
   const child = spawn(command, args, {
@@ -53,6 +63,7 @@ apiProc = start(
 webProc = start("web", "pnpm", ["--filter", "web", "start"], {
   PORT: webPort,
   HOSTNAME: "0.0.0.0",
+  INTERNAL_API_PORT: apiPort,
 });
 
 process.on("SIGINT", () => shutdown(0));

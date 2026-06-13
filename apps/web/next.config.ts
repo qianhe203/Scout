@@ -4,7 +4,7 @@ import { fileURLToPath } from "node:url";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 
-const internalApiPort = process.env.INTERNAL_API_PORT ?? "3001";
+const internalApiPort = process.env.INTERNAL_API_PORT ?? "8787";
 const internalApiOrigin = `http://127.0.0.1:${internalApiPort}`;
 
 const nextConfig: NextConfig = {
