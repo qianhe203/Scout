@@ -16,8 +16,8 @@ An AI harness for creator discovery and evaluation — built for the [Fired Fest
 
 | Layer        | Tech                             | Deploy  |
 | ------------ | -------------------------------- | ------- |
-| Demo UI      | Next.js 15                       | Vercel  |
-| API          | Hono                             | Railway |
+| Demo UI      | Next.js 15                       | Railway (same service as API) |
+| API          | Hono                             | Railway (internal + proxy)    |
 | Harness      | TypeScript monorepo              | —       |
 | Creator data | Influencers.club + seed fallback | —       |
 
@@ -60,32 +60,31 @@ Optional: `OTEL_EXPORTER_OTLP_ENDPOINT`, `RUN_TOKEN_BUDGET`, `RUN_COST_CAP`, `CR
 
 ## Deploy
 
-### Railway (API + persistent runs)
+### Railway (UI + API on one URL)
 
-1. Create a Railway project from this repo (uses root `railway.json`).
-2. Attach a **volume** mounted at `/data/runs`.
-3. Set service env vars (Railway dashboard — not committed `.env`):
+`railway.json` builds both apps and runs `scripts/start-railway.mjs`: Next.js on the public port, Hono API on `127.0.0.1:3001`, with `/runs` and `/health` proxied through Next.
 
-| Variable | Example | Required |
-|----------|---------|----------|
-| `RUNS_DIR` | `/data/runs` | Yes (with volume) |
-| `CORS_ORIGIN` | `https://your-app.vercel.app` | Yes (prod) |
-| `LLM_PROVIDER` | `openai` or `anthropic` | For live LLM |
-| `OPENAI_API_KEY` | `sk-...` | If `openai` |
-| `ANTHROPIC_API_KEY` | `sk-ant-...` | If `anthropic` |
-| `LLM_MODEL` | `gpt-4o-mini` | Recommended (defaults per provider if unset) |
-| `TAVILY_API_KEY` | `tvly-...` | ICP web search |
-| `WORKER_MODE` | `llm` or `seed-only` | No (default `llm`) |
+1. Deploy from this repo (root `railway.json`).
+2. Attach a **volume** at `/data/runs`.
+3. Set env vars:
 
-Without `OPENAI_API_BASE`, OpenAI calls go to **`https://api.openai.com/v1`** (public API).
+| Variable | Example |
+|----------|---------|
+| `RUNS_DIR` | `/data/runs` |
+| `CORS_ORIGIN` | `https://web-production-fd9db8.up.railway.app` |
+| `LLM_PROVIDER` | `openai` |
+| `OPENAI_API_KEY` | your key |
+| `LLM_MODEL` | `gpt-4o-mini` |
+| `TAVILY_API_KEY` | for ICP research |
 
-4. Generate a public domain → e.g. `https://scout-api.up.railway.app`.
-5. Verify: `GET /health` → `{ ok: true }`.
+Leave **`NEXT_PUBLIC_HARNESS_API_URL` unset** on Railway (same-origin API via proxy).
 
-### Vercel (web UI)
+4. Redeploy → `https://your-app.up.railway.app/` shows the Scout UI.
 
-1. Import `apps/web` as the root directory (or monorepo with `vercel.json`).
-2. Set `NEXT_PUBLIC_HARNESS_API_URL` to your Railway API URL.
+### Vercel (optional split deploy)
+
+1. Import `apps/web` with `vercel.json`.
+2. Set `NEXT_PUBLIC_HARNESS_API_URL` to a separate Railway API URL.
 3. Deploy.
 
 ## Repo layout
