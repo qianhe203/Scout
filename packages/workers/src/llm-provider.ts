@@ -1,3 +1,5 @@
+import { AnthropicLLMProvider } from "./providers/anthropic.js";
+import { OpenAILLMProvider } from "./providers/openai.js";
 import type { LLMProvider, LLMResult } from "./llm.js";
 
 export class MockLLMProvider implements LLMProvider {
@@ -19,12 +21,35 @@ export class MockLLMProvider implements LLMProvider {
   }
 }
 
-export function createProviderFromEnv(): LLMProvider {
-  const provider = process.env.LLM_PROVIDER ?? "mock";
+export function createProviderFromEnv(
+  env: NodeJS.ProcessEnv = process.env,
+): LLMProvider {
+  const provider = env.LLM_PROVIDER ?? "mock";
+
   if (provider === "mock") {
     return new MockLLMProvider();
   }
+
+  if (provider === "anthropic") {
+    const apiKey = env.ANTHROPIC_API_KEY;
+    if (!apiKey) {
+      throw new Error("ANTHROPIC_API_KEY is required when LLM_PROVIDER=anthropic");
+    }
+    return new AnthropicLLMProvider(apiKey);
+  }
+
+  if (provider === "openai") {
+    const apiKey = env.OPENAI_API_KEY;
+    if (!apiKey) {
+      throw new Error("OPENAI_API_KEY is required when LLM_PROVIDER=openai");
+    }
+    return new OpenAILLMProvider(apiKey);
+  }
+
   throw new Error(
-    `LLM provider "${provider}" not wired yet — use LLM_PROVIDER=mock`,
+    `Unknown LLM provider "${provider}" — use mock, anthropic, or openai`,
   );
 }
+
+export { AnthropicLLMProvider } from "./providers/anthropic.js";
+export { OpenAILLMProvider } from "./providers/openai.js";

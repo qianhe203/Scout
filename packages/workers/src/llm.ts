@@ -113,3 +113,24 @@ export function exceedsTokenBudget(
 ): boolean {
   return currentTokens >= budget;
 }
+
+export class TokenBudgetExceededError extends Error {
+  constructor(
+    readonly currentTokens: number,
+    readonly budget: number,
+  ) {
+    super(
+      `Token budget exceeded: ${currentTokens} tokens used (budget ${budget})`,
+    );
+    this.name = "TokenBudgetExceededError";
+  }
+}
+
+export function assertTokenBudget(
+  currentTokens: number,
+  budget: number,
+): void {
+  if (exceedsTokenBudget(currentTokens, budget)) {
+    throw new TokenBudgetExceededError(currentTokens, budget);
+  }
+}

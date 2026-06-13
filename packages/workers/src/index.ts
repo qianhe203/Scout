@@ -20,11 +20,21 @@ export function createStubWorkers(): WorkerRegistry {
   };
 }
 
-export { callLLM, exceedsTokenBudget } from "./llm.js";
+export {
+  assertTokenBudget,
+  callLLM,
+  exceedsTokenBudget,
+  TokenBudgetExceededError,
+} from "./llm.js";
 export type {
   LLMCallOptions,
   LLMProvider,
   LLMResult,
   LLMTelemetrySink,
 } from "./llm.js";
-export { createProviderFromEnv, MockLLMProvider } from "./llm-provider.js";
+export {
+  AnthropicLLMProvider,
+  createProviderFromEnv,
+  MockLLMProvider,
+  OpenAILLMProvider,
+} from "./llm-provider.js";
