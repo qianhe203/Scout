@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1040" font-family="IBM Plex Sans, Segoe UI, sans-serif">
+  <defs>
+    <linearGradient id="harnessBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a2332"/>
+      <stop offset="100%" stop-color="#0f1419"/>
+    </linearGradient>
+    <filter id="shadow" x="-4%" y="-4%" width="108%" height="108%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-opacity="0.25"/>
+    </filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#8b9cb3"/>
+    </marker>
+    <marker id="arrowAccent" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#ff6b35"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6 Z" fill="#6eb5ff"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="1040" fill="#0f1419"/>
+
+  <!-- Title -->
+  <text x="700" y="42" text-anchor="middle" fill="#e8edf4" font-size="26" font-weight="700">Scout - Architecture</text>
+  <text x="700" y="68" text-anchor="middle" fill="#8b9cb3" font-size="14">AI harness for creator discovery | Next.js UI (Vercel) + Hono API (Railway)</text>
+
+  <!-- Next.js UI -->
+  <rect x="380" y="88" width="640" height="52" rx="10" fill="#2a2438" stroke="#a78bfa" stroke-width="2" filter="url(#shadow)"/>
+  <text x="700" y="112" text-anchor="middle" fill="#a78bfa" font-size="13" font-weight="600">Next.js UI (Vercel) - apps/web</text>
+  <text x="700" y="130" text-anchor="middle" fill="#8b9cb3" font-size="10">BriefForm | Pipeline | Alarms | CostPanel | Approval - NOT the harness</text>
+
+  <!-- Hono API -->
+  <rect x="470" y="152" width="460" height="44" rx="8" fill="#243044" stroke="#8b9cb3" stroke-width="1.5"/>
+  <text x="700" y="178" text-anchor="middle" fill="#e8edf4" font-size="12" font-weight="600">Hono API (Railway) - apps/api - POST /runs | REST | SSE</text>
+
+  <!-- ClientBrief -->
+  <rect x="480" y="210" width="440" height="64" rx="10" fill="#243044" stroke="#3dd68c" stroke-width="2" filter="url(#shadow)"/>
+  <text x="700" y="235" text-anchor="middle" fill="#3dd68c" font-size="13" font-weight="600">ClientBrief</text>
+  <text x="700" y="253" text-anchor="middle" fill="#8b9cb3" font-size="10">Company | Product | Budget | Risk | expanded brief fields</text>
+  <text x="700" y="267" text-anchor="middle" fill="#6eb5ff" font-size="9">targetAudience = hint only - ICPWorker runs independent research</text>
+
+  <!-- HARNESS CONTAINER -->
+  <rect x="40" y="292" width="1320" height="620" rx="16" fill="url(#harnessBg)" stroke="#ff6b35" stroke-width="3" stroke-dasharray="8 4" filter="url(#shadow)"/>
+  <text x="60" y="320" fill="#ff6b35" font-size="16" font-weight="700">SCOUT HARNESS (packages/harness) - separate from workers and UI</text>
+
+  <!-- Orchestrator -->
+  <rect x="420" y="334" width="560" height="44" rx="8" fill="#2d3a4d" stroke="#ff6b35" stroke-width="1.5"/>
+  <text x="700" y="362" text-anchor="middle" fill="#e8edf4" font-size="13" font-weight="600">Orchestrator - stage machine | retry | replay | escalation | token watchdog</text>
+
+  <!-- Five harness modules -->
+  <rect x="60" y="396" width="240" height="96" rx="10" fill="#1e2a3a" stroke="#f5c842" stroke-width="2"/>
+  <text x="180" y="424" text-anchor="middle" fill="#f5c842" font-size="12" font-weight="700">Guardrails</text>
+  <text x="180" y="442" text-anchor="middle" fill="#8b9cb3" font-size="9">G1 Budget | G2/G3 Platforms</text>
+  <text x="180" y="456" text-anchor="middle" fill="#8b9cb3" font-size="9">G4/G5 Risk | G6 No send | G7 IG</text>
+  <text x="180" y="478" text-anchor="middle" fill="#ff6b35" font-size="9">Pure functions - no LLM</text>
+
+  <rect x="320" y="396" width="240" height="96" rx="10" fill="#1e2a3a" stroke="#3dd68c" stroke-width="2"/>
+  <text x="440" y="424" text-anchor="middle" fill="#3dd68c" font-size="12" font-weight="700">Checkpoints</text>
+  <text x="440" y="442" text-anchor="middle" fill="#8b9cb3" font-size="9">CP0-CP4 explicit pass/fail</text>
+  <text x="440" y="456" text-anchor="middle" fill="#8b9cb3" font-size="9">CP0: 3+ evidence types | auto retry</text>
+  <text x="440" y="470" text-anchor="middle" fill="#8b9cb3" font-size="9">CP4: separate LLM evaluator</text>
+
+  <rect x="580" y="396" width="240" height="96" rx="10" fill="#1e2a3a" stroke="#6eb5ff" stroke-width="2"/>
+  <text x="700" y="424" text-anchor="middle" fill="#6eb5ff" font-size="12" font-weight="700">Materials</text>
+  <text x="700" y="442" text-anchor="middle" fill="#8b9cb3" font-size="9">Typed Zod artifacts | immutable</text>
+  <text x="700" y="456" text-anchor="middle" fill="#8b9cb3" font-size="9">Versioned runs/{id}/artifacts/</text>
+  <text x="700" y="470" text-anchor="middle" fill="#8b9cb3" font-size="9">checkpoints/ | alarms.jsonl</text>
+
+  <rect x="840" y="396" width="240" height="96" rx="10" fill="#1e2a3a" stroke="#ff6b6b" stroke-width="2"/>
+  <text x="960" y="424" text-anchor="middle" fill="#ff6b6b" font-size="12" font-weight="700">Alarms</text>
+  <text x="960" y="442" text-anchor="middle" fill="#8b9cb3" font-size="9">BUDGET_EXCEEDED | ICP_EVIDENCE_THIN</text>
+  <text x="960" y="456" text-anchor="middle" fill="#8b9cb3" font-size="9">RESEARCH_SOURCE_DOWN | HUMAN_REQUIRED</text>
+  <text x="960" y="470" text-anchor="middle" fill="#8b9cb3" font-size="9">Structured JSON to SSE + jsonl</text>
+
+  <rect x="1100" y="396" width="240" height="96" rx="10" fill="#1e2a3a" stroke="#a78bfa" stroke-width="2"/>
+  <text x="1220" y="424" text-anchor="middle" fill="#a78bfa" font-size="12" font-weight="700">Telemetry</text>
+  <text x="1220" y="442" text-anchor="middle" fill="#8b9cb3" font-size="9">OpenTelemetry spans | run-log.json</text>
+  <text x="1220" y="456" text-anchor="middle" fill="#8b9cb3" font-size="9">telemetry.jsonl | token/cost per stage</text>
+  <text x="1220" y="470" text-anchor="middle" fill="#8b9cb3" font-size="9">LLM_SPIN_DETECTED watchdog</text>
+
+  <!-- Pipeline label -->
+  <text x="60" y="528" fill="#8b9cb3" font-size="11" font-weight="600">WORKERS (packages/workers - swappable via worker-registry)</text>
+
+  <!-- Workers with CP badges -->
+  <rect x="60" y="542" width="128" height="80" rx="8" fill="#243044" stroke="#8b9cb3" stroke-width="1.5"/>
+  <text x="124" y="568" text-anchor="middle" fill="#e8edf4" font-size="11" font-weight="600">ICPWorker</text>
+  <text x="124" y="586" text-anchor="middle" fill="#8b9cb3" font-size="9">-&gt; ICPProposal</text>
+  <rect x="88" y="596" width="36" height="16" rx="4" fill="#3dd68c" fill-opacity="0.2" stroke="#3dd68c"/>
+  <text x="106" y="607" text-anchor="middle" fill="#3dd68c" font-size="8" font-weight="600">CP0</text>
+
+  <rect x="210" y="542" width="128" height="80" rx="8" fill="#243044" stroke="#8b9cb3" stroke-width="1.5"/>
+  <text x="274" y="568" text-anchor="middle" fill="#e8edf4" font-size="11" font-weight="600">ProductWorker</text>
+  <text x="274" y="586" text-anchor="middle" fill="#8b9cb3" font-size="9">-&gt; ProductBrief</text>
+  <rect x="238" y="596" width="36" height="16" rx="4" fill="#3dd68c" fill-opacity="0.2" stroke="#3dd68c"/>
+  <text x="256" y="607" text-anchor="middle" fill="#3dd68c" font-size="8" font-weight="600">CP1</text>
+
+  <rect x="360" y="542" width="128" height="80" rx="8" fill="#243044" stroke="#8b9cb3" stroke-width="1.5"/>
+  <text x="424" y="562" text-anchor="middle" fill="#e8edf4" font-size="11" font-weight="600">ResearchWorker</text>
+  <text x="424" y="580" text-anchor="middle" fill="#8b9cb3" font-size="9">-&gt; CreatorCandidates</text>
+  <rect x="388" y="596" width="36" height="16" rx="4" fill="#3dd68c" fill-opacity="0.2" stroke="#3dd68c"/>
+  <text x="406" y="607" text-anchor="middle" fill="#3dd68c" font-size="8" font-weight="600">CP2</text>
+
+  <rect x="510" y="542" width="128" height="80" rx="8" fill="#243044" stroke="#8b9cb3" stroke-width="1.5"/>
+  <text x="574" y="568" text-anchor="middle" fill="#e8edf4" font-size="11" font-weight="600">ScoreWorker</text>
+  <text x="574" y="586" text-anchor="middle" fill="#8b9cb3" font-size="9">-&gt; RankedShortlist</text>
+  <rect x="538" y="596" width="36" height="16" rx="4" fill="#3dd68c" fill-opacity="0.2" stroke="#3dd68c"/>
+  <text x="556" y="607" text-anchor="middle" fill="#3dd68c" font-size="8" font-weight="600">CP3</text>
+
+  <rect x="660" y="542" width="128" height="80" rx="8" fill="#243044" stroke="#8b9cb3" stroke-width="1.5"/>
+  <text x="724" y="568" text-anchor="middle" fill="#e8edf4" font-size="11" font-weight="600">OutreachWorker</text>
+  <text x="724" y="586" text-anchor="middle" fill="#8b9cb3" font-size="9">-&gt; Drafts only (G6)</text>
+  <rect x="688" y="596" width="36" height="16" rx="4" fill="#3dd68c" fill-opacity="0.2" stroke="#3dd68c"/>
+  <text x="706" y="607" text-anchor="middle" fill="#3dd68c" font-size="8" font-weight="600">CP4</text>
+
+  <!-- Persistence -->
+  <rect x="820" y="542" width="200" height="80" rx="8" fill="#162030" stroke="#6eb5ff" stroke-width="1.5"/>
+  <text x="920" y="572" text-anchor="middle" fill="#6eb5ff" font-size="11" font-weight="600">Persistence &amp; Replay</text>
+  <text x="920" y="590" text-anchor="middle" fill="#8b9cb3" font-size="9">runs/{id}/ on Railway disk</text>
+  <text x="920" y="606" text-anchor="middle" fill="#8b9cb3" font-size="9">POST /replay?from=CPn</text>
+
+  <!-- Human Gate -->
+  <rect x="1050" y="542" width="290" height="80" rx="8" fill="#2a2030" stroke="#3dd68c" stroke-width="2"/>
+  <text x="1195" y="572" text-anchor="middle" fill="#3dd68c" font-size="11" font-weight="600">Human Gate - export only</text>
+  <text x="1195" y="590" text-anchor="middle" fill="#8b9cb3" font-size="9">Approve before CampaignPack export</text>
+  <text x="1195" y="606" text-anchor="middle" fill="#ff6b35" font-size="9">No human at CP0 - automated ICP retry ladder</text>
+
+  <!-- Worker pipeline arrows -->
+  <line x1="188" y1="582" x2="208" y2="582" stroke="#8b9cb3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="338" y1="582" x2="358" y2="582" stroke="#8b9cb3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="488" y1="582" x2="508" y2="582" stroke="#8b9cb3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="638" y1="582" x2="658" y2="582" stroke="#8b9cb3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="788" y1="582" x2="818" y2="582" stroke="#8b9cb3" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- ICP adapters -->
+  <rect x="60" y="648" width="400" height="72" rx="8" fill="#162030" stroke="#6eb5ff" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="260" y="670" text-anchor="middle" fill="#6eb5ff" font-size="11" font-weight="600">ICPWorker adapters (Stage 0)</text>
+  <text x="260" y="688" text-anchor="middle" fill="#8b9cb3" font-size="9">webSearchAdapter (category + competitor) | creatorGraphAdapter</text>
+  <text x="260" y="704" text-anchor="middle" fill="#8b9cb3" font-size="9">websiteAdapter | Pass 2-3 retry on ICP_EVIDENCE_THIN</text>
+  <line x1="124" y1="622" x2="124" y2="646" stroke="#6eb5ff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- Research adapters -->
+  <rect x="480" y="648" width="400" height="72" rx="8" fill="#162030" stroke="#6eb5ff" stroke-width="1" stroke-dasharray="4 3"/>
+  <text x="680" y="670" text-anchor="middle" fill="#6eb5ff" font-size="11" font-weight="600">ResearchWorker adapters (Stage 2)</text>
+  <text x="680" y="688" text-anchor="middle" fill="#8b9cb3" font-size="9">influencersClubAdapter - ICP + ProductBrief to API filters</text>
+  <text x="680" y="704" text-anchor="middle" fill="#8b9cb3" font-size="9">seedAdapter (data/creators.json) - RESEARCH_SOURCE_DOWN</text>
+  <line x1="424" y1="622" x2="424" y2="646" stroke="#6eb5ff" stroke-width="1.5" marker-end="url(#arrowBlue)"/>
+
+  <!-- External services -->
+  <rect x="900" y="648" width="440" height="72" rx="8" fill="#1a1520" stroke="#8b9cb3" stroke-width="1"/>
+  <text x="1120" y="670" text-anchor="middle" fill="#e8edf4" font-size="11" font-weight="600">External services</text>
+  <text x="1120" y="688" text-anchor="middle" fill="#8b9cb3" font-size="9">Tavily/Serper | Influencers.club | LLM (workers + CP4)</text>
+  <text x="1120" y="704" text-anchor="middle" fill="#8b9cb3" font-size="9">Influencers.club = data pipe | Scout = constraints</text>
+
+  <!-- Feedback loops -->
+  <path d="M 574 622 Q 574 740 480 740 Q 380 740 380 622" fill="none" stroke="#ff6b35" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrowAccent)"/>
+  <text x="480" y="758" text-anchor="middle" fill="#ff6b35" font-size="10">G1 budget -&gt; ScoreWorker revises -&gt; RankedShortlist_v2</text>
+
+  <path d="M 724 622 Q 724 780 124 780 Q 60 780 60 622" fill="none" stroke="#ff6b35" stroke-width="1.5" stroke-dasharray="5 3" marker-end="url(#arrowAccent)"/>
+  <text x="400" y="798" text-anchor="middle" fill="#ff6b35" font-size="10">CP0 thin evidence -&gt; auto retry | CP4 fail -&gt; OutreachWorker revises</text>
+
+  <!-- Vertical flow into harness -->
+  <line x1="700" y1="140" x2="700" y2="150" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="700" y1="196" x2="700" y2="208" stroke="#8b9cb3" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="700" y1="274" x2="700" y2="290" stroke="#3dd68c" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="124" y1="290" x2="124" y2="540" stroke="#8b9cb3" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+  <!-- Export -->
+  <rect x="560" y="940" width="280" height="56" rx="10" fill="#243044" stroke="#3dd68c" stroke-width="2" filter="url(#shadow)"/>
+  <text x="700" y="965" text-anchor="middle" fill="#3dd68c" font-size="13" font-weight="600">CampaignPack Export</text>
+  <text x="700" y="983" text-anchor="middle" fill="#8b9cb3" font-size="11">Shortlist + drafts + ICP evidence + run log</text>
+  <line x1="1195" y1="622" x2="1195" y2="910" stroke="#8b9cb3" stroke-width="1.5"/>
+  <line x1="1195" y1="910" x2="700" y2="910" stroke="#8b9cb3" stroke-width="1.5"/>
+  <line x1="700" y1="910" x2="700" y2="938" stroke="#8b9cb3" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- Artifact flow annotation -->
+  <text x="700" y="878" text-anchor="middle" fill="#8b9cb3" font-size="10">ClientBrief -&gt; ICPProposal -&gt; ProductBrief -&gt; CreatorCandidates -&gt; RankedShortlist -&gt; OutreachDrafts -&gt; CampaignPack</text>
+
+  <!-- Legend -->
+  <rect x="40" y="1008" width="1320" height="28" rx="8" fill="#1a2332" stroke="#2d3a4d"/>
+  <rect x="60" y="1015" width="14" height="14" fill="none" stroke="#ff6b35" stroke-width="2" stroke-dasharray="4 2"/>
+  <text x="82" y="1027" fill="#8b9cb3" font-size="11">Harness boundary</text>
+  <rect x="220" y="1015" width="14" height="14" fill="#2a2438" stroke="#a78bfa"/>
+  <text x="242" y="1027" fill="#8b9cb3" font-size="11">Next.js UI</text>
+  <rect x="360" y="1015" width="14" height="14" fill="#243044" stroke="#8b9cb3"/>
+  <text x="382" y="1027" fill="#8b9cb3" font-size="11">Swappable worker</text>
+  <rect x="530" y="1015" width="14" height="14" fill="#162030" stroke="#6eb5ff" stroke-dasharray="4 2"/>
+  <text x="552" y="1027" fill="#8b9cb3" font-size="11">Platform adapter</text>
+  <line x1="690" y1="1022" x2="730" y2="1022" stroke="#ff6b35" stroke-width="1.5" stroke-dasharray="5 3"/>
+  <text x="740" y="1027" fill="#8b9cb3" font-size="11">Feedback / retry loop</text>
+  <rect x="880" y="1015" width="36" height="14" rx="3" fill="#3dd68c" fill-opacity="0.2" stroke="#3dd68c"/>
+  <text x="926" y="1027" fill="#8b9cb3" font-size="11">Checkpoint</text>
+</svg>

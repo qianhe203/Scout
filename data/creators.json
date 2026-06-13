@@ -1,0 +1,112 @@
+[
+  {
+    "id": "creator_001",
+    "handle": "@homeworkout_hannah",
+    "platform": "tiktok",
+    "audienceTags": ["fitness", "home-workout", "millennials"],
+    "estimatedRate": 650,
+    "engagementRate": 0.058,
+    "followerCount": 82000,
+    "scandalFlag": false,
+    "trendingScore": 0.72
+  },
+  {
+    "id": "creator_002",
+    "handle": "@mindful_maya",
+    "platform": "instagram",
+    "audienceTags": ["wellness", "mindfulness", "millennials"],
+    "estimatedRate": 1200,
+    "engagementRate": 0.041,
+    "followerCount": 145000,
+    "scandalFlag": false,
+    "trendingScore": 0.55
+  },
+  {
+    "id": "creator_003",
+    "handle": "@techfounder_tips",
+    "platform": "youtube",
+    "audienceTags": ["saas", "startups", "b2b"],
+    "estimatedRate": 3500,
+    "engagementRate": 0.032,
+    "followerCount": 210000,
+    "scandalFlag": false,
+    "trendingScore": 0.48
+  },
+  {
+    "id": "creator_004",
+    "handle": "@budget_bites",
+    "platform": "tiktok",
+    "audienceTags": ["food", "budget", "gen-z"],
+    "estimatedRate": 400,
+    "engagementRate": 0.071,
+    "followerCount": 52000,
+    "scandalFlag": false,
+    "trendingScore": 0.81
+  },
+  {
+    "id": "creator_005",
+    "handle": "@parenting_patch",
+    "platform": "instagram",
+    "audienceTags": ["parenting", "family", "millennials"],
+    "estimatedRate": 900,
+    "engagementRate": 0.045,
+    "followerCount": 98000,
+    "scandalFlag": false,
+    "trendingScore": 0.6
+  },
+  {
+    "id": "creator_006",
+    "handle": "@devlife_dan",
+    "platform": "x",
+    "audienceTags": ["engineering", "saas", "b2b"],
+    "estimatedRate": 750,
+    "engagementRate": 0.028,
+    "followerCount": 64000,
+    "scandalFlag": false,
+    "trendingScore": 0.44
+  },
+  {
+    "id": "creator_007",
+    "handle": "@glowup_gia",
+    "platform": "tiktok",
+    "audienceTags": ["beauty", "skincare", "gen-z"],
+    "estimatedRate": 1100,
+    "engagementRate": 0.063,
+    "followerCount": 175000,
+    "scandalFlag": true,
+    "trendingScore": 0.77
+  },
+  {
+    "id": "creator_008",
+    "handle": "@run_with_rio",
+    "platform": "youtube",
+    "audienceTags": ["running", "fitness", "health"],
+    "estimatedRate": 2200,
+    "engagementRate": 0.036,
+    "followerCount": 130000,
+    "scandalFlag": false,
+    "trendingScore": 0.52
+  },
+  {
+    "id": "creator_009",
+    "handle": "@smallbiz_sara",
+    "platform": "instagram",
+    "audienceTags": ["small-business", "marketing", "b2b"],
+    "estimatedRate": 850,
+    "engagementRate": 0.039,
+    "followerCount": 72000,
+    "scandalFlag": false,
+    "trendingScore": 0.58
+  },
+  {
+    "id": "creator_010",
+    "handle": "@threads_thinker",
+    "platform": "threads",
+    "audienceTags": ["culture", "commentary", "millennials"],
+    "estimatedRate": 300,
+    "engagementRate": 0.022,
+    "followerCount": 28000,
+    "scandalFlag": false,
+    "trendingScore": 0.65
+  }
+]
