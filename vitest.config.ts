@@ -7,6 +7,9 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 export default defineConfig({
   test: {
     root: rootDir,
-    include: ["packages/**/src/**/*.test.ts"],
+    include: [
+      "packages/**/src/**/*.test.ts",
+      "apps/**/src/**/*.test.ts",
+    ],
   },
 });
