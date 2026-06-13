@@ -7,6 +7,38 @@ export {
   type WorkerMode,
 } from "./create-workers.js";
 export {
+  createCreatorGraphAdapterFromEnv,
+  MockCreatorGraphAdapter,
+  SeedCreatorGraphAdapter,
+  type CreatorGraphAdapter,
+  type CreatorGraphResult,
+} from "./adapters/creator-graph.js";
+export {
+  createWebSearchAdapterFromEnv,
+  MockWebSearchAdapter,
+  SerperWebSearchAdapter,
+  TavilyWebSearchAdapter,
+  type WebSearchAdapter,
+  type WebSearchResult,
+} from "./adapters/web-search.js";
+export {
+  createWebsiteAdapterFromEnv,
+  extractTextFromHtml,
+  FetchWebsiteAdapter,
+  MockWebsiteAdapter,
+  type WebsiteAdapter,
+  type WebsitePage,
+} from "./adapters/website.js";
+export {
+  buildCategoryQueries,
+  buildCompetitorQueries,
+  collectClientBriefEvidence,
+  collectIcpResearch,
+  ICPWorker,
+  type ICPWorkerOptions,
+  type ResearchEvidence,
+} from "./icp.js";
+export {
   createSeedAdapter,
   extractIcpKeywords,
   resolveResearchPlatforms,

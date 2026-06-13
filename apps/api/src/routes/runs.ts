@@ -338,6 +338,60 @@ export function createRunsRouter(config: RunsRouterConfig) {
     return c.json({ runId, status: "running" as const, replayFrom: from }, 202);
   });
 
+  app.post("/runs/:id/approve", async (c) => {
+    const runId = c.req.param("id");
+    if (!(await runExists(config.runsDir, runId))) {
+      return c.json({ error: "Run not found" }, 404);
+    }
+
+    const meta = await runStore.loadMeta(runId);
+    if (meta.status !== "awaiting_approval") {
+      return c.json(
+        { error: `Run is not awaiting approval (status: ${meta.status})` },
+        400,
+      );
+    }
+
+    const workerMode = parseWorkerMode(c.req.query("workerMode"));
+    pubsub.initRun(runId);
+
+    const onEvent = async (event: RunEvent) => {
+      await appendRunEvent(config.runsDir, runId, event);
+      await pubsub.publish(runId, event);
+    };
+
+    const orchestrator = createOrchestrator(
+      { ...config, skipApprovalGate: true },
+      resolveWorkers(workerMode),
+      onEvent,
+    );
+
+    void orchestrator
+      .resumeRun(runId, "CP4")
+      .then(async () => {
+        const updated = await runStore.loadMeta(runId);
+        updated.status = "complete";
+        await runStore.writeMeta(updated);
+      })
+      .catch(async (err: unknown) => {
+        const message = err instanceof Error ? err.message : String(err);
+        await onEvent({
+          kind: "alarm",
+          alarm: {
+            type: "RUN_FAILED",
+            context: { message, phase: "approve" },
+            severity: "high",
+            recommended_action: "Check export stage logs",
+            timestamp: new Date().toISOString(),
+          },
+        });
+        meta.status = "failed";
+        await runStore.writeMeta(meta);
+      });
+
+    return c.json({ runId, status: "running" as const }, 202);
+  });
+
   app.get("/health", (c) => c.json({ ok: true, service: "scout-api" }));
 
   return app;

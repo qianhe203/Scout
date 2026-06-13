@@ -1,9 +1,13 @@
 import type { HarnessContext, Worker, WorkerRegistry } from "@scout/harness";
+import { createCreatorGraphAdapterFromEnv } from "./adapters/creator-graph.js";
+import { createWebSearchAdapterFromEnv } from "./adapters/web-search.js";
+import { createWebsiteAdapterFromEnv } from "./adapters/website.js";
 import {
   seedPipelineICP,
   seedPipelineOutreach,
   seedPipelineProductBrief,
 } from "./fixtures/seed-pipeline.js";
+import { ICPWorker } from "./icp.js";
 import { SeedResearchWorker } from "./research/seed-research.js";
 import { RuleBasedScoreWorker } from "./score/rule-based-score.js";
 
@@ -22,7 +26,7 @@ function fixtureWorker(name: string, artifact: unknown): Worker {
   };
 }
 
-/** Placeholder workers — replaced by LLM implementations in U8/U9. */
+/** Placeholder workers — replaced by LLM implementations in U9. */
 export function createStubWorkers(): WorkerRegistry {
   const stub = (name: string): Worker => ({
     name,
@@ -60,5 +64,15 @@ export function createWorkers(
     };
   }
 
-  return createStubWorkers();
+  const stubs = createStubWorkers();
+  return {
+    ...stubs,
+    icp: new ICPWorker({
+      webSearch: createWebSearchAdapterFromEnv(),
+      website: createWebsiteAdapterFromEnv(),
+      creatorGraph: createCreatorGraphAdapterFromEnv({
+        creatorsPath: options.creatorsPath,
+      }),
+    }),
+  };
 }

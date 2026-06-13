@@ -8,6 +8,7 @@
   --accent: #3b82f6;
   --pass: #22c55e;
   --fail: #ef4444;
+  --warn: #f59e0b;
 }
 
 * {
@@ -21,13 +22,270 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
 }
 
 a {
   color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 code,
 pre {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 3rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.page-header h1,
+.run-title {
+  margin: 0.25rem 0 0;
+  font-size: 1.75rem;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.panel-title {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.875rem;
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+.field input,
+.field textarea,
+.field select {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 0.55rem 0.65rem;
+  font: inherit;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.65rem 1rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error {
+  color: var(--fail);
+  margin: 0.5rem 0;
+}
+
+.run-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 900px) {
+  .field-grid,
+  .run-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.status-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.status-pill.live {
+  border-color: var(--pass);
+  color: var(--pass);
+}
+
+.status-pill.offline {
+  color: var(--muted);
+}
+
+.status-running,
+.status-pending {
+  color: var(--warn);
+}
+
+.status-complete,
+.status-awaiting_approval {
+  color: var(--pass);
+}
+
+.status-failed {
+  color: var(--fail);
+}
+
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.timeline-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.badge {
+  min-width: 4.5rem;
+  text-align: center;
+  border-radius: 6px;
+  padding: 0.15rem 0.4rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.badge-pass {
+  border-color: var(--pass);
+  color: var(--pass);
+}
+
+.badge-fail {
+  border-color: var(--fail);
+  color: var(--fail);
+}
+
+.badge-running {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.badge-retry {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+
+.alarm-list pre,
+.artifact-list pre {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  overflow: auto;
+  font-size: 0.75rem;
+  margin: 0.5rem 0 0;
+}
+
+.artifact-list details + details {
+  margin-top: 0.75rem;
+}
+
+.artifact-list summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.cost-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem 1rem;
+  margin: 0 0 1rem;
+}
+
+.cost-summary dt {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.cost-summary dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+.cost-calls {
+  margin: 0;
+  padding-left: 1rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.feedback-banner {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid var(--warn);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.approval-gate {
+  border-color: var(--accent);
 }

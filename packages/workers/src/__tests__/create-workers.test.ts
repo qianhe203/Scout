@@ -21,9 +21,10 @@ describe("createWorkers", () => {
     expect(workers.score).toBeInstanceOf(RuleBasedScoreWorker);
   });
 
-  it("keeps stub workers in default llm mode", () => {
-    const workers = createWorkers("llm");
+  it("wires ICPWorker in default llm mode", () => {
+    const workers = createWorkers("llm", { creatorsPath });
 
+    expect(workers.icp.name).toBe("ICPWorker");
     expect(workers.research.name).toBe("ResearchWorker");
   });
 });
