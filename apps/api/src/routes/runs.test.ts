@@ -139,8 +139,11 @@ describe("runs API", () => {
     const body = await sseRes.text();
     const events = parseSseEvents(body);
     expect(events.length).toBeGreaterThan(0);
-    expect(events[0]?.kind).toBe("stage_started");
-    expect(events.some((e) => e.kind === "artifact_written")).toBe(true);
+    const firstStageStarted = events.findIndex((e) => e.kind === "stage_started");
+    const firstArtifact = events.findIndex((e) => e.kind === "artifact_written");
+    expect(firstStageStarted).toBeGreaterThanOrEqual(0);
+    expect(firstArtifact).toBeGreaterThanOrEqual(0);
+    expect(firstStageStarted).toBeLessThan(firstArtifact);
   });
 
   it("GET /runs/:id returns disk-backed status and telemetry summary", async () => {

@@ -3,18 +3,21 @@ import { evaluateCP0 } from "./cp0-icp.js";
 import { evaluateCP1 } from "./cp1-product.js";
 import { evaluateCP2 } from "./cp2-research.js";
 import { evaluateCP3 } from "./cp3-score.js";
-import { evaluateCP4 } from "./cp4-professionalism.js";
+import {
+  evaluateCP4,
+  evaluateCP4Heuristic,
+} from "./cp4-professionalism.js";
 
 export { evaluateCP0 } from "./cp0-icp.js";
 export { evaluateCP1 } from "./cp1-product.js";
 export { evaluateCP2 } from "./cp2-research.js";
 export { evaluateCP3 } from "./cp3-score.js";
-export { evaluateCP4 } from "./cp4-professionalism.js";
+export { evaluateCP4, evaluateCP4Heuristic } from "./cp4-professionalism.js";
 
-export function evaluateCheckpoint(
+export async function evaluateCheckpoint(
   stage: Stage,
   ctx: HarnessContext,
-): CheckpointResult | null {
+): Promise<CheckpointResult | null> {
   switch (stage) {
     case "icp":
       return evaluateCP0(ctx);
@@ -25,7 +28,9 @@ export function evaluateCheckpoint(
     case "score":
       return evaluateCP3(ctx);
     case "outreach":
-      return evaluateCP4(ctx);
+      return ctx.config.cp4Evaluator
+        ? ctx.config.cp4Evaluator(ctx)
+        : evaluateCP4(ctx);
     default:
       return null;
   }

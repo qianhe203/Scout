@@ -8,6 +8,7 @@ import type {
 } from "@scout/shared";
 import { AlarmEmitter } from "./alarms/emit.js";
 import { evaluateCheckpoint } from "./checkpoints/index.js";
+import { writeCampaignPackExport } from "./export/campaign-pack.js";
 import { enforcePost, enforcePre } from "./guardrails/index.js";
 import { RunStore } from "./persistence/run-store.js";
 import { createTelemetryContext } from "./telemetry/stage.js";
@@ -127,6 +128,10 @@ export class Orchestrator {
       config: this.config,
       telemetry: createTelemetryContext(this.telemetryWriter),
       retryCounts,
+      emitAlarm: async (alarm) => {
+        await this.alarms.emit(runId, alarm);
+        await this.emit({ kind: "alarm", alarm });
+      },
     };
   }
 
@@ -251,7 +256,7 @@ export class Orchestrator {
       path: stored.path,
     });
 
-    const cp = evaluateCheckpoint(stage, ctx);
+    const cp = await evaluateCheckpoint(stage, ctx);
     if (cp) {
       await this.runStore.materialsStore.writeCheckpoint(ctx.runId, {
         id: cp.id,
@@ -339,6 +344,25 @@ export class Orchestrator {
       artifactType: "CampaignPack",
       version: stored.meta.version,
       path: stored.path,
+    });
+
+    const log = await this.telemetryWriter.loadRunLog(ctx.runId);
+    const { csvPath, summaryPath } = await writeCampaignPackExport(
+      this.runStore.runDir(ctx.runId),
+      pack,
+      log,
+    );
+    await this.emit({
+      kind: "artifact_written",
+      artifactType: "export_csv",
+      version: 1,
+      path: csvPath,
+    });
+    await this.emit({
+      kind: "artifact_written",
+      artifactType: "export_summary",
+      version: 1,
+      path: summaryPath,
     });
 
     const durationMs = ctx.telemetry.endStage(stageSpan);

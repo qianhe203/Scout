@@ -12,6 +12,7 @@ import {
 } from "@scout/shared";
 import { Orchestrator, RunStore, type WorkerRegistry } from "@scout/harness";
 import { appendRunEvent, isTerminalEvent, loadRunEvents } from "../events/store.js";
+import { createCP4EvaluatorFromEnv } from "@scout/workers";
 import { createWorkers, type WorkerMode } from "../worker-registry.js";
 import { RunPubSub, runPubSub } from "../sse/pubsub.js";
 
@@ -30,7 +31,8 @@ export interface RunsRouterConfig {
 }
 
 function parseWorkerMode(value: string | undefined): WorkerMode {
-  return value === "llm" ? "llm" : "seed-only";
+  const resolved = value ?? process.env.WORKER_MODE;
+  return resolved === "seed-only" ? "seed-only" : "llm";
 }
 
 function harnessConfig(config: RunsRouterConfig) {
@@ -40,6 +42,7 @@ function harnessConfig(config: RunsRouterConfig) {
     runCostCapUsd: Number(process.env.RUN_COST_CAP ?? 2),
     maxRetriesPerStage: 2,
     skipApprovalGate: config.skipApprovalGate ?? false,
+    cp4Evaluator: createCP4EvaluatorFromEnv(),
   };
 }
 
@@ -390,6 +393,35 @@ export function createRunsRouter(config: RunsRouterConfig) {
       });
 
     return c.json({ runId, status: "running" as const }, 202);
+  });
+
+  app.get("/runs/:id/export/:file", async (c) => {
+    const runId = c.req.param("id");
+    const file = c.req.param("file");
+    if (!(await runExists(config.runsDir, runId))) {
+      return c.json({ error: "Run not found" }, 404);
+    }
+
+    const allowed = new Set(["campaign-pack.csv", "summary.md"]);
+    if (!allowed.has(file)) {
+      return c.json({ error: "Unknown export file" }, 404);
+    }
+
+    const path = join(config.runsDir, runId, "export", file);
+    try {
+      const content = await readFile(path, "utf8");
+      if (file.endsWith(".csv")) {
+        return c.text(content, 200, {
+          "Content-Type": "text/csv; charset=utf-8",
+          "Content-Disposition": `attachment; filename="${file}"`,
+        });
+      }
+      return c.text(content, 200, {
+        "Content-Type": "text/markdown; charset=utf-8",
+      });
+    } catch {
+      return c.json({ error: "Export not available yet" }, 404);
+    }
   });
 
   app.get("/health", (c) => c.json({ ok: true, service: "scout-api" }));

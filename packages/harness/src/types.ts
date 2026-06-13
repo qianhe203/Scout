@@ -41,6 +41,10 @@ export const STAGE_ARTIFACT_TYPES: Record<Stage, string | null> = {
   export: "CampaignPack",
 };
 
+export type CP4Evaluator = (
+  ctx: HarnessContext,
+) => CheckpointResult | Promise<CheckpointResult>;
+
 export interface HarnessConfig {
   runsDir: string;
   runTokenBudget: number;
@@ -49,6 +53,8 @@ export interface HarnessConfig {
   stageTimeoutMs?: number;
   /** When true, skips human approval and runs export (tests). */
   skipApprovalGate?: boolean;
+  /** Optional LLM-backed CP4 evaluator; defaults to heuristic rubric. */
+  cp4Evaluator?: CP4Evaluator;
 }
 
 export interface StoredArtifact<T = unknown> {
@@ -107,6 +113,7 @@ export interface HarnessContext {
   config: HarnessConfig;
   telemetry: TelemetryContext;
   retryCounts: Partial<Record<Stage, number>>;
+  emitAlarm?: (alarm: Alarm) => Promise<void>;
 }
 
 export interface GuardrailResult {

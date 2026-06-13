@@ -108,5 +108,159 @@
     "followerCount": 28000,
     "scandalFlag": false,
     "trendingScore": 0.65
+  },
+  {
+    "id": "creator_011",
+    "handle": "@yoga_yara",
+    "platform": "instagram",
+    "audienceTags": ["yoga", "wellness", "millennials"],
+    "estimatedRate": 980,
+    "engagementRate": 0.049,
+    "followerCount": 112000,
+    "scandalFlag": false,
+    "trendingScore": 0.61
+  },
+  {
+    "id": "creator_012",
+    "handle": "@lift_with_leo",
+    "platform": "tiktok",
+    "audienceTags": ["fitness", "strength", "millennials"],
+    "estimatedRate": 720,
+    "engagementRate": 0.055,
+    "followerCount": 91000,
+    "scandalFlag": false,
+    "trendingScore": 0.69
+  },
+  {
+    "id": "creator_013",
+    "handle": "@mealprep_mia",
+    "platform": "youtube",
+    "audienceTags": ["nutrition", "meal-prep", "wellness"],
+    "estimatedRate": 1800,
+    "engagementRate": 0.038,
+    "followerCount": 156000,
+    "scandalFlag": false,
+    "trendingScore": 0.57
+  },
+  {
+    "id": "creator_014",
+    "handle": "@cycle_sam",
+    "platform": "instagram",
+    "audienceTags": ["cycling", "fitness", "health"],
+    "estimatedRate": 640,
+    "engagementRate": 0.043,
+    "followerCount": 68000,
+    "scandalFlag": false,
+    "trendingScore": 0.53
+  },
+  {
+    "id": "creator_015",
+    "handle": "@stretch_studio",
+    "platform": "tiktok",
+    "audienceTags": ["mobility", "wellness", "home-workout"],
+    "estimatedRate": 520,
+    "engagementRate": 0.062,
+    "followerCount": 47000,
+    "scandalFlag": false,
+    "trendingScore": 0.74
+  },
+  {
+    "id": "creator_016",
+    "handle": "@protein_pete",
+    "platform": "youtube",
+    "audienceTags": ["fitness", "nutrition", "millennials"],
+    "estimatedRate": 2400,
+    "engagementRate": 0.034,
+    "followerCount": 188000,
+    "scandalFlag": false,
+    "trendingScore": 0.5
+  },
+  {
+    "id": "creator_017",
+    "handle": "@calm_katie",
+    "platform": "threads",
+    "audienceTags": ["mindfulness", "wellness", "millennials"],
+    "estimatedRate": 280,
+    "engagementRate": 0.025,
+    "followerCount": 24000,
+    "scandalFlag": false,
+    "trendingScore": 0.62
+  },
+  {
+    "id": "creator_018",
+    "handle": "@trail_tess",
+    "platform": "instagram",
+    "audienceTags": ["hiking", "outdoors", "health"],
+    "estimatedRate": 870,
+    "engagementRate": 0.047,
+    "followerCount": 103000,
+    "scandalFlag": false,
+    "trendingScore": 0.59
+  },
+  {
+    "id": "creator_019",
+    "handle": "@desk_to_deadlift",
+    "platform": "x",
+    "audienceTags": ["fitness", "productivity", "millennials"],
+    "estimatedRate": 430,
+    "engagementRate": 0.031,
+    "followerCount": 39000,
+    "scandalFlag": false,
+    "trendingScore": 0.56
+  },
+  {
+    "id": "creator_020",
+    "handle": "@smoothie_squad",
+    "platform": "tiktok",
+    "audienceTags": ["nutrition", "wellness", "gen-z"],
+    "estimatedRate": 590,
+    "engagementRate": 0.066,
+    "followerCount": 76000,
+    "scandalFlag": false,
+    "trendingScore": 0.78
+  },
+  {
+    "id": "creator_021",
+    "handle": "@pilates_paula",
+    "platform": "instagram",
+    "audienceTags": ["pilates", "wellness", "millennials"],
+    "estimatedRate": 1050,
+    "engagementRate": 0.044,
+    "followerCount": 124000,
+    "scandalFlag": false,
+    "trendingScore": 0.63
+  },
+  {
+    "id": "creator_022",
+    "handle": "@macro_mike",
+    "platform": "youtube",
+    "audienceTags": ["fitness", "nutrition", "health"],
+    "estimatedRate": 1950,
+    "engagementRate": 0.037,
+    "followerCount": 142000,
+    "scandalFlag": false,
+    "trendingScore": 0.54
+  },
+  {
+    "id": "creator_023",
+    "handle": "@recovery_ro",
+    "platform": "tiktok",
+    "audienceTags": ["recovery", "wellness", "fitness"],
+    "estimatedRate": 480,
+    "engagementRate": 0.051,
+    "followerCount": 58000,
+    "scandalFlag": false,
+    "trendingScore": 0.67
+  },
+  {
+    "id": "creator_024",
+    "handle": "@studio_sweat",
+    "platform": "instagram",
+    "audienceTags": ["home-workout", "fitness", "millennials"],
+    "estimatedRate": 790,
+    "engagementRate": 0.046,
+    "followerCount": 88000,
+    "scandalFlag": false,
+    "trendingScore": 0.64
   }
 ]

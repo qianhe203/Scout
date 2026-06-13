@@ -26,5 +26,7 @@ describe("createWorkers", () => {
 
     expect(workers.icp.name).toBe("ICPWorker");
     expect(workers.research.name).toBe("ResearchWorker");
+    expect(workers.product.name).toBe("ProductWorker");
+    expect(workers.outreach.name).toBe("OutreachWorker");
   });
 });

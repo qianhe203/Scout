@@ -14,6 +14,13 @@ export {
   type CreatorGraphResult,
 } from "./adapters/creator-graph.js";
 export {
+  createInfluencersClubAdapterFromEnv,
+  InfluencersClubAdapterImpl,
+  InfluencersClubApiError,
+  MockInfluencersClubAdapter,
+  type InfluencersClubAdapter,
+} from "./adapters/influencers-club.js";
+export {
   createWebSearchAdapterFromEnv,
   MockWebSearchAdapter,
   SerperWebSearchAdapter,
@@ -47,7 +54,16 @@ export {
   type SeedCreatorRecord,
 } from "./adapters/seed.js";
 export { SeedResearchWorker } from "./research/seed-research.js";
+export { ResearchWorker, type ResearchWorkerOptions } from "./research.js";
 export { RuleBasedScoreWorker } from "./score/rule-based-score.js";
+export { ScoreWorker } from "./score.js";
+export { ProductWorker, type ProductWorkerOptions } from "./product.js";
+export { OutreachWorker, type OutreachWorkerOptions } from "./outreach.js";
+export {
+  createCP4Evaluator,
+  createCP4EvaluatorFromEnv,
+  type CP4EvaluatorOptions,
+} from "./cp4-evaluator.js";
 export {
   seedPipelineICP,
   seedPipelineOutreach,

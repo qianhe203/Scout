@@ -7,8 +7,13 @@ export { evaluateCP0 } from "./checkpoints/cp0-icp.js";
 export { evaluateCP1 } from "./checkpoints/cp1-product.js";
 export { evaluateCP2 } from "./checkpoints/cp2-research.js";
 export { evaluateCP3 } from "./checkpoints/cp3-score.js";
-export { evaluateCP4 } from "./checkpoints/cp4-professionalism.js";
+export { evaluateCP4, evaluateCP4Heuristic } from "./checkpoints/cp4-professionalism.js";
 export { evaluateCheckpoint } from "./checkpoints/index.js";
+export {
+  buildCampaignPackCsv,
+  buildCampaignSummary,
+  writeCampaignPackExport,
+} from "./export/campaign-pack.js";
 export {
   enforceG1Budget,
   enforceG2PlatformAllow,
@@ -33,6 +38,7 @@ export type {
   WorkerRegistry,
   GuardrailResult,
   CheckpointResult,
+  CP4Evaluator,
   RunEventHandler,
   TelemetrySink,
   TelemetryContext,
