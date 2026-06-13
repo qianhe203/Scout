@@ -1,24 +1,26 @@
-import type { HarnessContext, Worker, WorkerRegistry } from "@scout/harness";
+export type { HarnessContext, Worker, WorkerRegistry } from "@scout/harness";
 
-export type { HarnessContext, Worker, WorkerRegistry };
-
-/** Placeholder workers — replaced by real implementations in U5/U8/U9. */
-export function createStubWorkers(): WorkerRegistry {
-  const stub = (name: string): Worker => ({
-    name,
-    async run() {
-      throw new Error(`${name} not implemented yet`);
-    },
-  });
-
-  return {
-    icp: stub("ICPWorker"),
-    product: stub("ProductWorker"),
-    research: stub("ResearchWorker"),
-    score: stub("ScoreWorker"),
-    outreach: stub("OutreachWorker"),
-  };
-}
+export {
+  createStubWorkers,
+  createWorkers,
+  type CreateWorkersOptions,
+  type WorkerMode,
+} from "./create-workers.js";
+export {
+  createSeedAdapter,
+  extractIcpKeywords,
+  resolveResearchPlatforms,
+  type ResearchQuery,
+  type SeedAdapter,
+  type SeedCreatorRecord,
+} from "./adapters/seed.js";
+export { SeedResearchWorker } from "./research/seed-research.js";
+export { RuleBasedScoreWorker } from "./score/rule-based-score.js";
+export {
+  seedPipelineICP,
+  seedPipelineOutreach,
+  seedPipelineProductBrief,
+} from "./fixtures/seed-pipeline.js";
 
 export {
   assertTokenBudget,
