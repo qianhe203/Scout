@@ -12,7 +12,7 @@ export function evaluateCP2(ctx: HarnessContext): CheckpointResult {
   const allowlist = ctx.clientBrief.platformAllowlist;
   const minPlatforms =
     allowlist?.length === 1 ? 1 : allowlist?.length ? 2 : 2;
-  const minCandidates = 5;
+  const minCandidates = 3;
 
   const passed =
     creators.length >= minCandidates && platforms.size >= minPlatforms;

@@ -1,9 +1,31 @@
 import type { CreatorCandidate } from "@scout/shared";
 import { CreatorCandidateSchema } from "@scout/shared";
 import type { ResearchQuery } from "./seed.js";
-import { extractIcpKeywords } from "./seed.js";
 
 const BASE_URL = "https://api-dashboard.influencers.club";
+
+/** Max discovery API calls per ResearchWorker run when retry is enabled. */
+export const DISCOVERY_MAX_API_CALLS = 3;
+
+function discoveryDebugEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.INFLUENCERS_CLUB_DEBUG === "true" || env.INFLUENCERS_CLUB_DEBUG === "1";
+}
+
+/** TEMP: off by default — set INFLUENCERS_CLUB_RETRY=true to re-enable minimal retry pass. */
+export function discoveryRetryEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.INFLUENCERS_CLUB_RETRY === "true" || env.INFLUENCERS_CLUB_RETRY === "1";
+}
+
+function logDiscoveryRequest(
+  body: DiscoveryRequestBody,
+  meta: { call: number; tier: DiscoverySearchTier },
+): void {
+  if (!discoveryDebugEnabled()) return;
+  console.log(
+    `[scout:influencers-club] POST /public/v1/discovery/ (call ${meta.call}, ${meta.tier})\n` +
+      JSON.stringify(body, null, 2),
+  );
+}
 
 export interface InfluencersClubAdapter {
   name: string;
@@ -44,6 +66,29 @@ const DEFAULT_DISCOVERY_PLATFORMS: DiscoveryApiPlatform[] = [
   "twitter",
 ];
 
+const PLATFORM_SEARCH_PRIORITY: DiscoveryApiPlatform[] = [
+  "instagram",
+  "youtube",
+  "tiktok",
+  "twitter",
+];
+
+const CHANNEL_KEYWORDS = new Set([
+  "linkedin",
+  "twitter",
+  "instagram",
+  "youtube",
+  "tiktok",
+  "github",
+  "facebook",
+  "twitch",
+  "threads",
+  "newsletters",
+  "conferences",
+  "blogs",
+  "forums",
+]);
+
 const ICP_TO_API_PLATFORM: Record<string, DiscoveryApiPlatform> = {
   instagram: "instagram",
   ig: "instagram",
@@ -56,6 +101,178 @@ const ICP_TO_API_PLATFORM: Record<string, DiscoveryApiPlatform> = {
   threads: "instagram",
   onlyfans: "onlyfans",
 };
+
+/** Influencers.club hard limit for ai_search (we stay well under). */
+export const AI_SEARCH_API_MAX = 150;
+export const AI_SEARCH_MAX_BROAD = 100;
+export const AI_SEARCH_MAX_MINIMAL = 50;
+
+const AI_SEARCH_STOP_WORDS = new Set([
+  "a",
+  "an",
+  "the",
+  "and",
+  "or",
+  "for",
+  "with",
+  "who",
+  "that",
+  "this",
+  "are",
+  "is",
+  "was",
+  "be",
+  "to",
+  "in",
+  "on",
+  "at",
+  "by",
+  "of",
+  "from",
+  "as",
+  "it",
+  "their",
+  "they",
+  "we",
+  "our",
+  "your",
+  "designed",
+  "combining",
+  "perfect",
+  "everyday",
+  "making",
+  "seamlessly",
+  "blends",
+  "unparalleled",
+  "premium",
+  "seeking",
+  "want",
+  "without",
+  "sacrificing",
+  "trusted",
+  "value",
+  "very",
+  "really",
+  "just",
+  "also",
+  "about",
+  "into",
+  "through",
+  "during",
+  "before",
+  "after",
+  "above",
+  "below",
+  "between",
+  "under",
+  "over",
+  "such",
+  "both",
+  "each",
+  "few",
+  "more",
+  "most",
+  "other",
+  "some",
+  "than",
+  "then",
+  "too",
+  "can",
+  "will",
+  "has",
+  "have",
+  "had",
+  "not",
+  "but",
+  "all",
+  "any",
+  "only",
+  "own",
+  "same",
+  "so",
+  "use",
+  "used",
+  "using",
+]);
+
+export type DiscoverySearchTier = "broad" | "minimal";
+
+function aiSearchLimitForTier(tier: DiscoverySearchTier): number {
+  return tier === "minimal" ? AI_SEARCH_MAX_MINIMAL : AI_SEARCH_MAX_BROAD;
+}
+
+function extractAiSearchTokens(text: string): string[] {
+  const tokens: string[] = [];
+  for (const token of text.split(/\W+/)) {
+    const normalized = token.toLowerCase().replace(/[^\w-]/g, "");
+    if (
+      normalized.length >= 3 &&
+      !AI_SEARCH_STOP_WORDS.has(normalized) &&
+      !CHANNEL_KEYWORDS.has(normalized)
+    ) {
+      tokens.push(normalized);
+    }
+  }
+  return tokens;
+}
+
+function dedupeTokens(tokens: string[]): string[] {
+  const seen = new Set<string>();
+  const deduped: string[] = [];
+  for (const token of tokens) {
+    if (seen.has(token)) continue;
+    seen.add(token);
+    deduped.push(token);
+  }
+  return deduped;
+}
+
+function truncateAiSearch(text: string, maxLen: number): string {
+  const trimmed = text.trim().replace(/\s+/g, " ");
+  if (trimmed.length <= maxLen) return trimmed;
+
+  const cut = trimmed.slice(0, maxLen);
+  const lastSpace = cut.lastIndexOf(" ");
+  if (lastSpace > maxLen * 0.45) {
+    return cut.slice(0, lastSpace).trim();
+  }
+  return cut.trim();
+}
+
+function buildCompactAiSearch(
+  query: ResearchQuery,
+  tier: DiscoverySearchTier,
+): string {
+  const segment = primarySegment(query);
+  const maxLen = aiSearchLimitForTier(tier);
+  const tokenBudget = tier === "minimal" ? 4 : 8;
+
+  const productTokens = extractAiSearchTokens(query.product.valueProposition);
+  const personaTokens = extractAiSearchTokens(segment?.persona ?? "");
+  const messageTokens = extractAiSearchTokens(query.product.keyMessages?.[0] ?? "");
+
+  const ordered = dedupeTokens([
+    ...productTokens.slice(0, tokenBudget),
+    ...personaTokens.slice(0, Math.ceil(tokenBudget / 2)),
+    ...messageTokens.slice(0, 2),
+  ]);
+
+  if (ordered.length === 0) {
+    return truncateAiSearch(
+      (segment?.persona ?? query.product.valueProposition).trim(),
+      maxLen,
+    );
+  }
+
+  let phrase = "";
+  for (const token of ordered) {
+    const next = phrase ? `${phrase} ${token}` : token;
+    if (next.length > maxLen) break;
+    phrase = next;
+  }
+
+  return truncateAiSearch(phrase, maxLen);
+}
 
 export function mapPlatformToApi(platform: string): DiscoveryApiPlatform | null {
   const normalized = platform.trim().toLowerCase();
@@ -92,121 +309,219 @@ export function resolveDiscoveryPlatforms(platforms: string[]): DiscoveryApiPlat
   return [...resolved];
 }
 
+/** Pick at most two platforms to conserve discovery credits. */
+export function pickDiscoveryPlatforms(
+  platforms: string[],
+): DiscoveryApiPlatform[] {
+  const resolved = resolveDiscoveryPlatforms(platforms);
+  const picked: DiscoveryApiPlatform[] = [];
+
+  for (const platform of PLATFORM_SEARCH_PRIORITY) {
+    if (resolved.includes(platform) && picked.length < 2) {
+      picked.push(platform);
+    }
+  }
+
+  for (const platform of resolved) {
+    if (!picked.includes(platform) && picked.length < 2) {
+      picked.push(platform);
+    }
+  }
+
+  return picked.length > 0 ? picked : ["instagram", "youtube"];
+}
+
 export interface DiscoveryRequestBody {
   platform: DiscoveryApiPlatform;
   filters: Record<string, unknown>;
   paging: { limit: number; page: number };
 }
 
-/** Build a platform-valid POST /public/v1/discovery/ body per API contract. */
+function primarySegment(query: ResearchQuery) {
+  return (
+    query.icp.segments[query.icp.recommendedPrimarySegment] ??
+    query.icp.segments[0]
+  );
+}
+
+/** Compact natural-language search — tier caps: broad 100 chars, minimal 50. */
+export function aiSearchPromptFromQuery(
+  query: ResearchQuery,
+  tier: DiscoverySearchTier = "broad",
+): string {
+  const aiSearch = buildCompactAiSearch(query, tier);
+  const maxLen = aiSearchLimitForTier(tier);
+  if (aiSearch.length > AI_SEARCH_API_MAX) {
+    throw new Error(
+      `ai_search exceeds Influencers.club limit (${aiSearch.length} > ${AI_SEARCH_API_MAX})`,
+    );
+  }
+  if (aiSearch.length > maxLen) {
+    throw new Error(
+      `ai_search exceeds tier limit (${aiSearch.length} > ${maxLen})`,
+    );
+  }
+  return aiSearch;
+}
+
+/** Short keyword list — persona/product tokens only (not ICP channel names). */
+export function searchKeywordsFromQuery(query: ResearchQuery): string[] {
+  const segment = primarySegment(query);
+  const tokens = new Set<string>();
+
+  for (const token of (segment?.persona ?? "").split(/\W+/)) {
+    const normalized = token.toLowerCase().replace(/[^\w-]/g, "");
+    if (normalized.length >= 4 && !CHANNEL_KEYWORDS.has(normalized)) {
+      tokens.add(normalized);
+    }
+  }
+
+  for (const token of query.product.valueProposition.split(/\W+/)) {
+    const normalized = token.toLowerCase().replace(/[^\w-]/g, "");
+    if (normalized.length >= 4 && !CHANNEL_KEYWORDS.has(normalized)) {
+      tokens.add(normalized);
+    }
+  }
+
+  return [...tokens].slice(0, 2);
+}
+
+function followerRangeForTier(tier: DiscoverySearchTier) {
+  if (tier === "minimal") {
+    return { min: 1_000, max: 5_000_000 };
+  }
+  return { min: 1_000, max: 2_000_000 };
+}
+
+/** Build POST /public/v1/discovery/ body — broad first, minimal on retry. */
 export function buildDiscoveryRequestBody(
   platform: DiscoveryApiPlatform,
-  keywords: string[],
+  query: ResearchQuery,
   limit: number,
-  options?: { preferLinkedInCreators?: boolean },
+  tier: DiscoverySearchTier,
 ): DiscoveryRequestBody {
-  const followerRange = { min: 5_000, max: 750_000 };
-  const linkedInFilter =
-    options?.preferLinkedInCreators === true
-      ? { creator_has: { has_linkedin: true } }
-      : {};
+  const aiSearch = aiSearchPromptFromQuery(query, tier);
+  const keywords = searchKeywordsFromQuery(query);
+  const paging = { limit, page: 0 };
+
+  if (tier === "minimal") {
+    return buildMinimalDiscoveryBody(platform, query, paging);
+  }
+
+  const followers = followerRangeForTier("broad");
 
   switch (platform) {
     case "youtube":
       return {
         platform,
         filters: {
-          keywords_in_description: keywords,
-          number_of_subscribers: followerRange,
-          ...linkedInFilter,
+          ai_search: aiSearch,
+          ...(keywords.length > 0
+            ? { keywords_in_description: keywords.slice(0, 1) }
+            : {}),
+          number_of_subscribers: followers,
         },
-        paging: { limit, page: 0 },
+        paging,
       };
     case "twitter":
       return {
         platform,
         filters: {
-          keywords_in_bio: keywords,
-          keywords_in_tweets: keywords,
-          number_of_followers: followerRange,
-          ...linkedInFilter,
+          ai_search: aiSearch,
+          ...(keywords.length > 0 ? { keywords_in_bio: keywords.slice(0, 1) } : {}),
+          number_of_followers: followers,
         },
-        paging: { limit, page: 0 },
+        paging,
       };
     case "tiktok":
       return {
         platform,
         filters: {
-          keywords_in_bio: keywords,
-          number_of_followers: followerRange,
-          ...linkedInFilter,
+          ai_search: aiSearch,
+          ...(keywords.length > 0 ? { keywords_in_bio: keywords.slice(0, 1) } : {}),
+          number_of_followers: followers,
         },
-        paging: { limit, page: 0 },
+        paging,
       };
     case "twitch":
       return {
         platform,
         filters: {
-          keywords_in_description: keywords,
-          ...linkedInFilter,
+          ai_search: aiSearch,
+          ...(keywords.length > 0
+            ? { keywords_in_description: keywords.slice(0, 1) }
+            : {}),
         },
-        paging: { limit, page: 0 },
+        paging,
       };
     case "onlyfans":
       return {
         platform,
-        filters: {
-          ...linkedInFilter,
-        },
-        paging: { limit, page: 0 },
+        filters: { ai_search: aiSearch },
+        paging,
       };
     case "instagram":
     default:
       return {
         platform: "instagram",
         filters: {
-          keywords_in_captions: keywords,
-          number_of_followers: followerRange,
-          ...linkedInFilter,
+          ai_search: aiSearch,
+          ...(keywords.length > 0
+            ? { keywords_in_bio: keywords.slice(0, 1) }
+            : {}),
+          number_of_followers: followers,
         },
-        paging: { limit, page: 0 },
+        paging,
       };
   }
 }
 
-function icpMentionsLinkedIn(query: ResearchQuery): boolean {
-  for (const segment of query.icp.segments) {
-    for (const channel of segment.channels) {
-      if (channel.toLowerCase().includes("linkedin")) return true;
-    }
-  }
-  return query.platforms.some((p) => p.toLowerCase().includes("linkedin"));
-}
+function buildMinimalDiscoveryBody(
+  platform: DiscoveryApiPlatform,
+  query: ResearchQuery,
+  paging: { limit: number; page: number },
+): DiscoveryRequestBody {
+  const followers = followerRangeForTier("minimal");
+  const aiSearch = aiSearchPromptFromQuery(query, "minimal");
 
-function keywordsFromQuery(query: ResearchQuery): string[] {
-  const icpKeywords = [...extractIcpKeywords(query.icp)];
-  const segment =
-    query.icp.segments[query.icp.recommendedPrimarySegment] ??
-    query.icp.segments[0];
-  const personaTokens = segment?.persona
-    .split(/\s+/)
-    .map((token) => token.replace(/[^\w-]/g, ""))
-    .filter((token) => token.length >= 4)
-    .slice(0, 4);
-
-  const combined = [...new Set([...icpKeywords, ...(personaTokens ?? [])])];
-  if (combined.length === 0) {
-    combined.push(
-      query.product.valueProposition.split(/\s+/).slice(0, 3).join(" "),
-    );
+  switch (platform) {
+    case "youtube":
+      return {
+        platform,
+        filters: {
+          ai_search: aiSearch,
+          number_of_subscribers: followers,
+        },
+        paging,
+      };
+    case "twitter":
+    case "tiktok":
+    case "instagram":
+      return {
+        platform: platform === "instagram" ? "instagram" : platform,
+        filters: {
+          ai_search: aiSearch,
+          number_of_followers: followers,
+        },
+        paging,
+      };
+    case "twitch":
+    case "onlyfans":
+      return {
+        platform,
+        filters: { ai_search: aiSearch },
+        paging,
+      };
+    default:
+      return { platform, filters: { ai_search: aiSearch }, paging };
   }
-  return combined.slice(0, 6);
 }
 
 function normalizeCreator(
   raw: Record<string, unknown>,
   platform: string,
   index: number,
+  fallbackTags: string[],
 ): CreatorCandidate | null {
   const handle =
     (raw.username as string | undefined) ??
@@ -239,32 +554,7 @@ function normalizeCreator(
     ? (raw.audience_tags as string[])
     : Array.isArray(raw.niche_tags)
       ? (raw.niche_tags as string[])
-      : keywordsFromQuery({
-          icp: {
-            segments: [
-              {
-                persona: String(raw.bio ?? raw.description ?? platform),
-                demographics: "",
-                channels: [platform],
-                rationale: "",
-                confidence: "medium",
-                evidence: [],
-              },
-            ],
-            clientAlignment: "no_client_input",
-            recommendedPrimarySegment: 0,
-            evidenceSourceTypes: [],
-            icpRetryPasses: 0,
-          },
-          product: {
-            valueProposition: "",
-            differentiators: [],
-            toneGuidance: "",
-            keyMessages: [],
-          },
-          platforms: [platform],
-          maxResults: 1,
-        }).slice(0, 4);
+      : fallbackTags.slice(0, 4);
 
   return CreatorCandidateSchema.parse({
     id,
@@ -312,55 +602,95 @@ export class InfluencersClubAdapterImpl implements InfluencersClubAdapter {
     private readonly fetchImpl: FetchImpl = fetch,
   ) {}
 
+  private async fetchCreators(
+    body: DiscoveryRequestBody,
+    fallbackTags: string[],
+    meta: { call: number; tier: DiscoverySearchTier },
+  ): Promise<CreatorCandidate[]> {
+    logDiscoveryRequest(body, meta);
+
+    const response = await this.fetchImpl(`${BASE_URL}/public/v1/discovery/`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const text = await response.text();
+      throw new InfluencersClubApiError(
+        `Influencers.club discovery failed (${response.status}) for platform "${body.platform}": ${text.slice(0, 300)}`,
+        response.status,
+      );
+    }
+
+    const payload = (await response.json()) as unknown;
+    const rows = extractResults(payload);
+    const creators = rows
+      .map((row, index) =>
+        normalizeCreator(row, body.platform, index, fallbackTags),
+      )
+      .filter((creator): creator is CreatorCandidate => creator != null);
+
+    if (discoveryDebugEnabled()) {
+      console.log(
+        `[scout:influencers-club] ${body.platform} (${meta.tier}) → ${creators.length} creator(s)`,
+      );
+    }
+
+    return creators;
+  }
+
   async discover(query: ResearchQuery): Promise<CreatorCandidate[]> {
-    const keywords = keywordsFromQuery(query);
-    const apiPlatforms = resolveDiscoveryPlatforms(query.platforms);
-    const preferLinkedInCreators = icpMentionsLinkedIn(query);
+    const apiPlatforms = pickDiscoveryPlatforms(query.platforms);
     const perPlatform = Math.max(
-      3,
+      5,
       Math.ceil(query.maxResults / Math.max(apiPlatforms.length, 1)),
     );
+    const fallbackTags = searchKeywordsFromQuery(query);
     const creators: CreatorCandidate[] = [];
+    let apiCalls = 0;
 
     for (const platform of apiPlatforms) {
-      const body = buildDiscoveryRequestBody(
+      if (apiCalls >= DISCOVERY_MAX_API_CALLS) break;
+
+      const broad = buildDiscoveryRequestBody(
         platform,
-        keywords,
+        query,
         perPlatform,
-        { preferLinkedInCreators },
+        "broad",
       );
-
-      const response = await this.fetchImpl(
-        `${BASE_URL}/public/v1/discovery/`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${this.apiKey}`,
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify(body),
-        },
+      creators.push(
+        ...(await this.fetchCreators(broad, fallbackTags, {
+          call: apiCalls + 1,
+          tier: "broad",
+        })),
       );
+      apiCalls += 1;
+    }
 
-      if (!response.ok) {
-        const text = await response.text();
-        throw new InfluencersClubApiError(
-          `Influencers.club discovery failed (${response.status}) for platform "${body.platform}": ${text.slice(0, 300)}`,
-          response.status,
-        );
-      }
-
-      const payload = (await response.json()) as unknown;
-      const rows = extractResults(payload);
-      for (const [index, row] of rows.entries()) {
-        const normalized = normalizeCreator(
-          row,
-          body.platform,
-          creators.length + index,
-        );
-        if (normalized) creators.push(normalized);
-      }
+    if (
+      discoveryRetryEnabled() &&
+      creators.length === 0 &&
+      apiCalls < DISCOVERY_MAX_API_CALLS
+    ) {
+      const retryPlatform = apiPlatforms[0] ?? "instagram";
+      const minimal = buildDiscoveryRequestBody(
+        retryPlatform,
+        query,
+        perPlatform,
+        "minimal",
+      );
+      creators.push(
+        ...(await this.fetchCreators(minimal, fallbackTags, {
+          call: apiCalls + 1,
+          tier: "minimal",
+        })),
+      );
+      apiCalls += 1;
     }
 
     const deduped = new Map<string, CreatorCandidate>();
