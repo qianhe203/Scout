@@ -7,7 +7,7 @@ import { ProductBriefSchema } from "@scout/shared";
 import type { HarnessContext, Worker } from "@scout/harness";
 import type { WebsiteAdapter } from "./adapters/website.js";
 import { callLLM, type LLMProvider } from "./llm.js";
-import { createProviderFromEnv } from "./llm-provider.js";
+import { createProviderFromEnv, defaultLlmModelFromEnv } from "./llm-provider.js";
 import { extractJson } from "./utils/json.js";
 
 const REUSABLE_EVIDENCE = new Set([
@@ -109,8 +109,7 @@ export class ProductWorker implements Worker {
     this.model =
       options.model ??
       process.env.PRODUCT_MODEL ??
-      process.env.LLM_MODEL ??
-      "claude-sonnet-4-20250514";
+      defaultLlmModelFromEnv();
   }
 
   async run(ctx: HarnessContext): Promise<ProductBrief> {

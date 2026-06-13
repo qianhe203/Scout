@@ -21,6 +21,22 @@ export class MockLLMProvider implements LLMProvider {
   }
 }
 
+/** Default model when `LLM_MODEL` is unset — follows `LLM_PROVIDER`. */
+export function defaultLlmModelFromEnv(
+  env: NodeJS.ProcessEnv = process.env,
+): string {
+  if (env.LLM_MODEL?.trim()) {
+    return env.LLM_MODEL.trim();
+  }
+  if (env.LLM_PROVIDER === "anthropic") {
+    return "claude-sonnet-4-20250514";
+  }
+  if (env.LLM_PROVIDER === "openai") {
+    return "gpt-4o-mini";
+  }
+  return "gpt-4o-mini";
+}
+
 export function createProviderFromEnv(
   env: NodeJS.ProcessEnv = process.env,
   fetchImpl: typeof fetch = fetch,

@@ -76,7 +76,7 @@ export class ResearchWorker implements Worker {
           severity: "medium",
           context: { source: "influencers_club", message },
           recommended_action:
-            "Using seed adapter fallback; verify INFLUENCERS_CLUB_API_KEY",
+            "Using seed adapter fallback; check platform mapping and INFLUENCERS_CLUB_API_KEY",
           timestamp: new Date().toISOString(),
         });
       }

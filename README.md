@@ -62,13 +62,25 @@ Optional: `OTEL_EXPORTER_OTLP_ENDPOINT`, `RUN_TOKEN_BUDGET`, `RUN_COST_CAP`, `CR
 
 ### Railway (API + persistent runs)
 
-1. Create a Railway service from this repo; use `railway.json`.
-2. Attach a volume mounted at `/data/runs`.
-3. Set env vars from `.env.example` plus:
-   - `RUNS_DIR=/data/runs`
-   - `CORS_ORIGIN=https://your-app.vercel.app`
-   - `WORKER_MODE=llm`
-4. Note the public API URL (e.g. `https://scout-api.up.railway.app`).
+1. Create a Railway project from this repo (uses root `railway.json`).
+2. Attach a **volume** mounted at `/data/runs`.
+3. Set service env vars (Railway dashboard — not committed `.env`):
+
+| Variable | Example | Required |
+|----------|---------|----------|
+| `RUNS_DIR` | `/data/runs` | Yes (with volume) |
+| `CORS_ORIGIN` | `https://your-app.vercel.app` | Yes (prod) |
+| `LLM_PROVIDER` | `openai` or `anthropic` | For live LLM |
+| `OPENAI_API_KEY` | `sk-...` | If `openai` |
+| `ANTHROPIC_API_KEY` | `sk-ant-...` | If `anthropic` |
+| `LLM_MODEL` | `gpt-4o-mini` | Recommended (defaults per provider if unset) |
+| `TAVILY_API_KEY` | `tvly-...` | ICP web search |
+| `WORKER_MODE` | `llm` or `seed-only` | No (default `llm`) |
+
+Without `OPENAI_API_BASE`, OpenAI calls go to **`https://api.openai.com/v1`** (public API).
+
+4. Generate a public domain → e.g. `https://scout-api.up.railway.app`.
+5. Verify: `GET /health` → `{ ok: true }`.
 
 ### Vercel (web UI)
 

@@ -1,18 +1,26 @@
 import { BriefForm } from "../components/BriefForm";
+import { SiteHeader } from "../components/SiteHeader";
 
 export default function HomePage() {
   return (
-    <main className="page">
-      <header className="page-header">
-        <div>
-          <p className="eyebrow">Scout</p>
-          <h1>Creator discovery harness</h1>
-          <p className="muted">
-          Scout is an AI-powered digital marketing agency managed by a harness that enforces budget, quality, and brand-safety constraints.
+    <>
+      <SiteHeader />
+      <main className="page">
+        <header className="hero">
+          <p className="hero-eyebrow">Your creator discovery partner</p>
+          <h1 className="hero-title">
+            <span className="hero-line">Find the right</span>
+            <span className="hero-line">
+              <span className="hero-accent">creators</span> with confidence
+            </span>
+          </h1>
+          <p className="hero-lead">
+            Result-driven AI research, discovery, and outreach — with harness
+            guardrails that enforce budget, quality, and brand safety.
           </p>
-        </div>
-      </header>
-      <BriefForm />
-    </main>
+        </header>
+        <BriefForm />
+      </main>
+    </>
   );
 }

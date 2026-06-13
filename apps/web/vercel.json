@@ -1,5 +1,5 @@
 {
-  "buildCommand": "cd ../.. && pnpm install && pnpm --filter @scout/web build",
+  "buildCommand": "cd ../.. && pnpm install --frozen-lockfile && pnpm run build:web",
   "outputDirectory": ".next",
   "framework": "nextjs",
   "installCommand": "cd ../.. && pnpm install"

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { createRun, type WorkerMode } from "../lib/api";
+import { createRun } from "../lib/api";
 
 export interface BriefFormValues {
   company: string;
@@ -17,7 +17,6 @@ export interface BriefFormValues {
   whyTheyBuy: string;
   platformAllowlist: string;
   platformBlocklist: string;
-  workerMode: WorkerMode;
 }
 
 const initialValues: BriefFormValues = {
@@ -33,7 +32,6 @@ const initialValues: BriefFormValues = {
   whyTheyBuy: "",
   platformAllowlist: "",
   platformBlocklist: "",
-  workerMode: "seed-only",
 };
 
 function splitList(value: string): string[] | undefined {
@@ -94,7 +92,7 @@ export function BriefForm() {
     setSubmitting(true);
     try {
       const payload = buildPayload(values);
-      const { runId } = await createRun(payload, values.workerMode);
+      const { runId } = await createRun(payload);
       router.push(`/runs/${runId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to start run");
@@ -105,9 +103,10 @@ export function BriefForm() {
   return (
     <form className="panel" onSubmit={onSubmit}>
       <h2 className="panel-title">Client brief</h2>
-      <p className="muted">
-        Submit a brief to start the Scout pipeline. Seed mode runs without paid
-        APIs.
+      <p className="muted panel-intro">
+        Submit a brief to start the <strong>Scout</strong> pipeline. LLM workers
+        research your ICP, discover creators, and draft outreach under harness
+        guardrails.
       </p>
 
       <div className="field-grid">
@@ -156,16 +155,6 @@ export function BriefForm() {
           >
             <option value="low">Low</option>
             <option value="high">High</option>
-          </select>
-        </label>
-        <label className="field">
-          <span>Worker mode</span>
-          <select
-            value={values.workerMode}
-            onChange={(e) => update("workerMode", e.target.value)}
-          >
-            <option value="seed-only">Seed only (demo)</option>
-            <option value="llm">LLM workers</option>
           </select>
         </label>
         <label className="field">

@@ -5,7 +5,7 @@ import type { CreatorGraphAdapter } from "./adapters/creator-graph.js";
 import type { WebSearchAdapter } from "./adapters/web-search.js";
 import type { WebsiteAdapter } from "./adapters/website.js";
 import { callLLM, type LLMProvider } from "./llm.js";
-import { createProviderFromEnv } from "./llm-provider.js";
+import { createProviderFromEnv, defaultLlmModelFromEnv } from "./llm-provider.js";
 import {
   enrichIcpProposal,
   formatZodError,
@@ -268,8 +268,7 @@ export class ICPWorker {
     this.model =
       options.model ??
       process.env.ICP_MODEL ??
-      process.env.LLM_MODEL ??
-      "claude-sonnet-4-20250514";
+      defaultLlmModelFromEnv();
   }
 
   async run(ctx: HarnessContext): Promise<ICPProposal> {

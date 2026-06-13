@@ -7,7 +7,7 @@ import type {
 import { OutreachDraftsSchema } from "@scout/shared";
 import type { HarnessContext, Worker } from "@scout/harness";
 import { callLLM, type LLMProvider } from "./llm.js";
-import { createProviderFromEnv } from "./llm-provider.js";
+import { createProviderFromEnv, defaultLlmModelFromEnv } from "./llm-provider.js";
 import { extractJson } from "./utils/json.js";
 
 export interface OutreachWorkerOptions {
@@ -75,8 +75,7 @@ export class OutreachWorker implements Worker {
     this.model =
       options.model ??
       process.env.OUTREACH_MODEL ??
-      process.env.LLM_MODEL ??
-      "claude-sonnet-4-20250514";
+      defaultLlmModelFromEnv();
   }
 
   async run(ctx: HarnessContext): Promise<OutreachDrafts> {

@@ -6,7 +6,7 @@ import type {
 } from "@scout/harness";
 import { evaluateCP4Heuristic } from "@scout/harness";
 import { callLLM, type LLMProvider } from "./llm.js";
-import { createProviderFromEnv } from "./llm-provider.js";
+import { createProviderFromEnv, defaultLlmModelFromEnv } from "./llm-provider.js";
 import { extractJson } from "./utils/json.js";
 
 export interface CP4EvaluatorOptions {
@@ -118,8 +118,7 @@ export function createCP4Evaluator(
   const model =
     options.model ??
     process.env.CP4_MODEL ??
-    process.env.LLM_MODEL ??
-    "claude-sonnet-4-20250514";
+    defaultLlmModelFromEnv();
   const useHeuristicOnly =
     options.useHeuristicOnly ??
     (process.env.LLM_PROVIDER === "mock" ||

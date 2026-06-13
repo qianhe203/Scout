@@ -25,18 +25,162 @@ export class InfluencersClubApiError extends Error {
 
 type FetchImpl = typeof fetch;
 
-const PLATFORM_MAP: Record<string, string> = {
+/** Platforms accepted by POST /public/v1/discovery/ — see docs.influencers.club/openapi/discovery-api */
+export const DISCOVERY_API_PLATFORMS = [
+  "instagram",
+  "youtube",
+  "tiktok",
+  "twitter",
+  "twitch",
+  "onlyfans",
+] as const;
+
+export type DiscoveryApiPlatform = (typeof DISCOVERY_API_PLATFORMS)[number];
+
+const DEFAULT_DISCOVERY_PLATFORMS: DiscoveryApiPlatform[] = [
+  "instagram",
+  "youtube",
+  "tiktok",
+  "twitter",
+];
+
+const ICP_TO_API_PLATFORM: Record<string, DiscoveryApiPlatform> = {
   instagram: "instagram",
+  ig: "instagram",
   tiktok: "tiktok",
   youtube: "youtube",
+  yt: "youtube",
   x: "twitter",
   twitter: "twitter",
   twitch: "twitch",
   threads: "instagram",
+  onlyfans: "onlyfans",
 };
 
-function mapPlatform(platform: string): string {
-  return PLATFORM_MAP[platform.toLowerCase()] ?? platform.toLowerCase();
+export function mapPlatformToApi(platform: string): DiscoveryApiPlatform | null {
+  const normalized = platform.trim().toLowerCase();
+  if (ICP_TO_API_PLATFORM[normalized]) {
+    return ICP_TO_API_PLATFORM[normalized];
+  }
+  if (
+    DISCOVERY_API_PLATFORMS.includes(normalized as DiscoveryApiPlatform)
+  ) {
+    return normalized as DiscoveryApiPlatform;
+  }
+  return null;
+}
+
+/** Map ICP / brief channels to Influencers.club discovery platforms (LinkedIn is not supported). */
+export function resolveDiscoveryPlatforms(platforms: string[]): DiscoveryApiPlatform[] {
+  const resolved = new Set<DiscoveryApiPlatform>();
+  for (const platform of platforms) {
+    const mapped = mapPlatformToApi(platform);
+    if (mapped) resolved.add(mapped);
+  }
+
+  if (resolved.size === 0) {
+    return [...DEFAULT_DISCOVERY_PLATFORMS];
+  }
+
+  if (resolved.size === 1) {
+    for (const fallback of DEFAULT_DISCOVERY_PLATFORMS) {
+      resolved.add(fallback);
+      if (resolved.size >= 2) break;
+    }
+  }
+
+  return [...resolved];
+}
+
+export interface DiscoveryRequestBody {
+  platform: DiscoveryApiPlatform;
+  filters: Record<string, unknown>;
+  paging: { limit: number; page: number };
+}
+
+/** Build a platform-valid POST /public/v1/discovery/ body per API contract. */
+export function buildDiscoveryRequestBody(
+  platform: DiscoveryApiPlatform,
+  keywords: string[],
+  limit: number,
+  options?: { preferLinkedInCreators?: boolean },
+): DiscoveryRequestBody {
+  const followerRange = { min: 5_000, max: 750_000 };
+  const linkedInFilter =
+    options?.preferLinkedInCreators === true
+      ? { creator_has: { has_linkedin: true } }
+      : {};
+
+  switch (platform) {
+    case "youtube":
+      return {
+        platform,
+        filters: {
+          keywords_in_description: keywords,
+          number_of_subscribers: followerRange,
+          ...linkedInFilter,
+        },
+        paging: { limit, page: 0 },
+      };
+    case "twitter":
+      return {
+        platform,
+        filters: {
+          keywords_in_bio: keywords,
+          keywords_in_tweets: keywords,
+          number_of_followers: followerRange,
+          ...linkedInFilter,
+        },
+        paging: { limit, page: 0 },
+      };
+    case "tiktok":
+      return {
+        platform,
+        filters: {
+          keywords_in_bio: keywords,
+          number_of_followers: followerRange,
+          ...linkedInFilter,
+        },
+        paging: { limit, page: 0 },
+      };
+    case "twitch":
+      return {
+        platform,
+        filters: {
+          keywords_in_description: keywords,
+          ...linkedInFilter,
+        },
+        paging: { limit, page: 0 },
+      };
+    case "onlyfans":
+      return {
+        platform,
+        filters: {
+          ...linkedInFilter,
+        },
+        paging: { limit, page: 0 },
+      };
+    case "instagram":
+    default:
+      return {
+        platform: "instagram",
+        filters: {
+          keywords_in_captions: keywords,
+          number_of_followers: followerRange,
+          ...linkedInFilter,
+        },
+        paging: { limit, page: 0 },
+      };
+  }
+}
+
+function icpMentionsLinkedIn(query: ResearchQuery): boolean {
+  for (const segment of query.icp.segments) {
+    for (const channel of segment.channels) {
+      if (channel.toLowerCase().includes("linkedin")) return true;
+    }
+  }
+  return query.platforms.some((p) => p.toLowerCase().includes("linkedin"));
 }
 
 function keywordsFromQuery(query: ResearchQuery): string[] {
@@ -170,22 +314,21 @@ export class InfluencersClubAdapterImpl implements InfluencersClubAdapter {
 
   async discover(query: ResearchQuery): Promise<CreatorCandidate[]> {
     const keywords = keywordsFromQuery(query);
+    const apiPlatforms = resolveDiscoveryPlatforms(query.platforms);
+    const preferLinkedInCreators = icpMentionsLinkedIn(query);
     const perPlatform = Math.max(
       3,
-      Math.ceil(query.maxResults / Math.max(query.platforms.length, 1)),
+      Math.ceil(query.maxResults / Math.max(apiPlatforms.length, 1)),
     );
     const creators: CreatorCandidate[] = [];
 
-    for (const platform of query.platforms) {
-      const mapped = mapPlatform(platform);
-      const body = {
-        platform: mapped,
-        filters: {
-          keywords_in_captions: keywords,
-          number_of_followers: { min: 5_000, max: 750_000 },
-        },
-        paging: { limit: perPlatform, page: 1 },
-      };
+    for (const platform of apiPlatforms) {
+      const body = buildDiscoveryRequestBody(
+        platform,
+        keywords,
+        perPlatform,
+        { preferLinkedInCreators },
+      );
 
       const response = await this.fetchImpl(
         `${BASE_URL}/public/v1/discovery/`,
@@ -203,7 +346,7 @@ export class InfluencersClubAdapterImpl implements InfluencersClubAdapter {
       if (!response.ok) {
         const text = await response.text();
         throw new InfluencersClubApiError(
-          `Influencers.club discovery failed (${response.status}): ${text.slice(0, 200)}`,
+          `Influencers.club discovery failed (${response.status}) for platform "${body.platform}": ${text.slice(0, 300)}`,
           response.status,
         );
       }
@@ -211,7 +354,11 @@ export class InfluencersClubAdapterImpl implements InfluencersClubAdapter {
       const payload = (await response.json()) as unknown;
       const rows = extractResults(payload);
       for (const [index, row] of rows.entries()) {
-        const normalized = normalizeCreator(row, platform, creators.length + index);
+        const normalized = normalizeCreator(
+          row,
+          body.platform,
+          creators.length + index,
+        );
         if (normalized) creators.push(normalized);
       }
     }

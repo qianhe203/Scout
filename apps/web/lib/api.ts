@@ -1,8 +1,6 @@
 export const API_BASE =
   process.env.NEXT_PUBLIC_HARNESS_API_URL ?? "http://localhost:3001";
 
-export type WorkerMode = "seed-only" | "llm";
-
 export interface CreateRunResponse {
   runId: string;
   status: string;
@@ -33,11 +31,8 @@ export interface StoredArtifactResponse {
   data: unknown;
 }
 
-export async function createRun(
-  body: unknown,
-  workerMode: WorkerMode = "seed-only",
-): Promise<CreateRunResponse> {
-  const res = await fetch(`${API_BASE}/runs?workerMode=${workerMode}`, {
+export async function createRun(body: unknown): Promise<CreateRunResponse> {
+  const res = await fetch(`${API_BASE}/runs`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),

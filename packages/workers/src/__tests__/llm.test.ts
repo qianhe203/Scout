@@ -15,6 +15,7 @@ import {
 import {
   AnthropicLLMProvider,
   createProviderFromEnv,
+  defaultLlmModelFromEnv,
   MockLLMProvider,
   OpenAILLMProvider,
 } from "../llm-provider.js";
@@ -111,6 +112,29 @@ describe("createProviderFromEnv", () => {
     expect(() => createProviderFromEnv({ LLM_PROVIDER: "openai" })).toThrow(
       /OPENAI_API_KEY/,
     );
+  });
+});
+
+describe("defaultLlmModelFromEnv", () => {
+  it("uses gpt-4o-mini for openai when LLM_MODEL is unset", () => {
+    expect(
+      defaultLlmModelFromEnv({ LLM_PROVIDER: "openai" }),
+    ).toBe("gpt-4o-mini");
+  });
+
+  it("uses claude-sonnet for anthropic when LLM_MODEL is unset", () => {
+    expect(
+      defaultLlmModelFromEnv({ LLM_PROVIDER: "anthropic" }),
+    ).toBe("claude-sonnet-4-20250514");
+  });
+
+  it("prefers explicit LLM_MODEL", () => {
+    expect(
+      defaultLlmModelFromEnv({
+        LLM_PROVIDER: "openai",
+        LLM_MODEL: "gpt-4o",
+      }),
+    ).toBe("gpt-4o");
   });
 });
 

@@ -85,6 +85,7 @@ export type {
 export {
   AnthropicLLMProvider,
   createProviderFromEnv,
+  defaultLlmModelFromEnv,
   MockLLMProvider,
   OpenAILLMProvider,
 } from "./llm-provider.js";

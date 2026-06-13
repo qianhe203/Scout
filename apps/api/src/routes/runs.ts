@@ -31,8 +31,8 @@ export interface RunsRouterConfig {
 }
 
 function parseWorkerMode(value: string | undefined): WorkerMode {
-  const resolved = value ?? process.env.WORKER_MODE;
-  return resolved === "seed-only" ? "seed-only" : "llm";
+  if (value === "seed-only") return "seed-only";
+  return "llm";
 }
 
 function harnessConfig(config: RunsRouterConfig) {
