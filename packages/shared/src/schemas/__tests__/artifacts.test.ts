@@ -3,6 +3,7 @@ import {
   BudgetExceededFeedbackSchema,
   ClientBriefSchema,
   ICPProposalSchema,
+  ProductUnclearFeedbackSchema,
   RankedShortlistSchema,
   RunEventSchema,
 } from "../../index.js";
@@ -197,6 +198,18 @@ describe("BudgetExceededFeedbackSchema", () => {
       trimToBudget: 2000,
       currentTotal: 2800,
       creatorsToRemove: ["c3", "c7"],
+    });
+    expect(result.success).toBe(true);
+  });
+});
+
+describe("ProductUnclearFeedbackSchema", () => {
+  it("parses CP1 product_unclear feedback", () => {
+    const result = ProductUnclearFeedbackSchema.safeParse({
+      kind: "product_unclear",
+      missingFields: [],
+      vagueFields: ["valueProposition"],
+      hint: "Clarify product positioning",
     });
     expect(result.success).toBe(true);
   });

@@ -15,7 +15,7 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "dev": "tsc --watch",
-    "test": "vitest run --config ../../vitest.config.ts"
+    "test": "vitest run --config ../../vitest.config.ts --root ../.."
   },
   "dependencies": {
     "@scout/shared": "workspace:*",
