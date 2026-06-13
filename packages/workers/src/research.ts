@@ -53,6 +53,7 @@ export class ResearchWorker implements Worker {
       product,
       platforms,
       maxResults: this.maxResults,
+      targetAudience: ctx.clientBrief.targetAudience,
     };
 
     if (this.influencersClub) {

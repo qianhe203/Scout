@@ -1,0 +1,12 @@
+{
+  "id": "CP2",
+  "passed": false,
+  "at": "2026-06-13T21:08:58.472Z",
+  "criteria": "CP2",
+  "details": {
+    "candidateCount": 0,
+    "platformCount": 0,
+    "minCandidates": 3,
+    "minPlatforms": 2
+  }
+}

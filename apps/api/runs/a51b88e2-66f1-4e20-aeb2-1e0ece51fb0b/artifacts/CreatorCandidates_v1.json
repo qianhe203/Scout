@@ -1,0 +1,13 @@
+{
+  "meta": {
+    "id": "d5136a2a-6908-434f-add2-551a4b522e1b",
+    "type": "CreatorCandidates",
+    "version": 1,
+    "runId": "a51b88e2-66f1-4e20-aeb2-1e0ece51fb0b",
+    "createdAt": "2026-06-13T19:09:46.591Z"
+  },
+  "data": {
+    "creators": []
+  },
+  "path": "runs/a51b88e2-66f1-4e20-aeb2-1e0ece51fb0b/artifacts/CreatorCandidates_v1.json"
+}

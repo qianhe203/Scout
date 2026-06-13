@@ -5,7 +5,7 @@ import type {
   HarnessContext,
 } from "@scout/harness";
 import { evaluateCP4Heuristic } from "@scout/harness";
-import { callLLM, type LLMProvider } from "./llm.js";
+import { callLLM, llmTelemetryFromContext, type LLMProvider } from "./llm.js";
 import { createProviderFromEnv, defaultLlmModelFromEnv } from "./llm-provider.js";
 import { extractJson } from "./utils/json.js";
 
@@ -99,6 +99,7 @@ async function evaluateWithLLM(
     model,
     messages: [{ role: "user", content: prompt }],
     provider,
+    telemetry: llmTelemetryFromContext(ctx),
   });
 
   const parsed = JSON.parse(extractJson(result.content)) as RubricResult;

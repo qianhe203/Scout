@@ -1,0 +1,18 @@
+{
+  "runId": "c461ddb6-a8e8-4de5-bdbc-f1a1fc4e9a24",
+  "status": "failed",
+  "currentStage": "research",
+  "clientBrief": {
+    "company": "Gauntlet",
+    "companyDescription": "Gauntlet transforms engineers into AI-first operators because most AI pilots don't have a technology problem, they have a talent problem.",
+    "companyWebsiteUrl": "https://gauntletai.com/",
+    "product": "Gauntlet graduates",
+    "productUrl": "https://gauntletai.com/hire",
+    "budget": 5000,
+    "risk": "low",
+    "targetAudience": "tech company execs"
+  },
+  "createdAt": "2026-06-13T20:44:38.282Z",
+  "updatedAt": "2026-06-13T20:44:46.675Z",
+  "retryCounts": {}
+}

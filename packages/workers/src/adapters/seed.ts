@@ -25,6 +25,8 @@ export interface ResearchQuery {
   product: ProductBrief;
   platforms: string[];
   maxResults: number;
+  /** Optional brief hint — used for creator-type discovery, not product copy. */
+  targetAudience?: string;
 }
 
 export interface SeedAdapter {

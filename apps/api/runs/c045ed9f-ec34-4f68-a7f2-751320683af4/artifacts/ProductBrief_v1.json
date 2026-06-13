@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "id": "98cbb8d9-3ba2-4a1b-940d-2f0aa639bb56",
+    "type": "ProductBrief",
+    "version": 1,
+    "runId": "c045ed9f-ec34-4f68-a7f2-751320683af4",
+    "createdAt": "2026-06-13T21:08:45.415Z"
+  },
+  "data": {
+    "valueProposition": "Karst SuperClip combines stunning design with exceptional durability, ensuring that style-conscious women have a reliable accessory that lasts for years.",
+    "differentiators": [
+      "Made from super durable cellulose acetate",
+      "Fashion-forward and practical design"
+    ],
+    "toneGuidance": "Engaging, stylish, and aspirational to resonate with fashion-conscious women.",
+    "keyMessages": [
+      "Elevate your style with our chic and sturdy clips, perfect for any occasion.",
+      "Invest in quality with the SuperClip, designed to complement your trendy lifestyle."
+    ],
+    "avoidPhrases": [
+      "cheap",
+      "disposable"
+    ]
+  },
+  "path": "runs/c045ed9f-ec34-4f68-a7f2-751320683af4/artifacts/ProductBrief_v1.json"
+}

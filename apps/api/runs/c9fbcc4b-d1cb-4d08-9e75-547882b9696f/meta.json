@@ -1,0 +1,20 @@
+{
+  "runId": "c9fbcc4b-d1cb-4d08-9e75-547882b9696f",
+  "status": "failed",
+  "currentStage": "research",
+  "clientBrief": {
+    "company": "Karst",
+    "companyDescription": "Hey,\nwe're\nKarst.\nWe\nmake\npremium\nhair\nclips\nthat\nare\ncute,\nsturdy,\nand\ncharmable.\nAll\nof\nour\npieces\nare\nmade\nwith\nsuper\ndurable\ncellulose\nacetate\nto\nlast\nyou\nfor\nyears\nto\ncome",
+    "companyWebsiteUrl": "https://wearkarst.com/",
+    "product": "Karst SuperClip",
+    "productUrl": "https://wearkarst.com/products/superclip-hair-clip-claw-maraschino",
+    "budget": 5000,
+    "risk": "low",
+    "targetAudience": "Women"
+  },
+  "createdAt": "2026-06-13T20:57:37.750Z",
+  "updatedAt": "2026-06-13T20:58:06.630Z",
+  "retryCounts": {
+    "product": 1
+  }
+}

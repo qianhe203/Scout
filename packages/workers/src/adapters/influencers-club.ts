@@ -11,9 +11,11 @@ function discoveryDebugEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
   return env.INFLUENCERS_CLUB_DEBUG === "true" || env.INFLUENCERS_CLUB_DEBUG === "1";
 }
 
-/** TEMP: off by default — set INFLUENCERS_CLUB_RETRY=true to re-enable minimal retry pass. */
+/** On by default — set INFLUENCERS_CLUB_RETRY=false to disable minimal retry pass. */
 export function discoveryRetryEnabled(env: NodeJS.ProcessEnv = process.env): boolean {
-  return env.INFLUENCERS_CLUB_RETRY === "true" || env.INFLUENCERS_CLUB_RETRY === "1";
+  const flag = env.INFLUENCERS_CLUB_RETRY?.trim().toLowerCase();
+  if (flag === "false" || flag === "0" || flag === "no") return false;
+  return true;
 }
 
 function logDiscoveryRequest(
@@ -104,8 +106,8 @@ const ICP_TO_API_PLATFORM: Record<string, DiscoveryApiPlatform> = {
 
 /** Influencers.club hard limit for ai_search (we stay well under). */
 export const AI_SEARCH_API_MAX = 150;
-export const AI_SEARCH_MAX_BROAD = 100;
-export const AI_SEARCH_MAX_MINIMAL = 50;
+export const AI_SEARCH_MAX_WORDS_BROAD = 6;
+export const AI_SEARCH_MAX_WORDS_MINIMAL = 3;
 
 const AI_SEARCH_STOP_WORDS = new Set([
   "a",
@@ -193,12 +195,28 @@ const AI_SEARCH_STOP_WORDS = new Set([
   "use",
   "used",
   "using",
+  "buyers",
+  "buy",
+  "follow",
+  "content",
+  "creator",
+  "creators",
+  "influencer",
+  "influencers",
+  "audience",
+  "partner",
+  "partners",
+  "discovery",
+  "conversions",
+  "conversion",
 ]);
 
 export type DiscoverySearchTier = "broad" | "minimal";
 
-function aiSearchLimitForTier(tier: DiscoverySearchTier): number {
-  return tier === "minimal" ? AI_SEARCH_MAX_MINIMAL : AI_SEARCH_MAX_BROAD;
+function aiSearchWordLimitForTier(tier: DiscoverySearchTier): number {
+  return tier === "minimal"
+    ? AI_SEARCH_MAX_WORDS_MINIMAL
+    : AI_SEARCH_MAX_WORDS_BROAD;
 }
 
 function extractAiSearchTokens(text: string): string[] {
@@ -239,39 +257,33 @@ function truncateAiSearch(text: string, maxLen: number): string {
   return cut.trim();
 }
 
+function creatorSearchTokens(query: ResearchQuery): string[] {
+  const segment = primarySegment(query);
+  const fromPersona = extractAiSearchTokens(segment?.persona ?? "");
+  const fromDemographics = extractAiSearchTokens(segment?.demographics ?? "");
+  const fromAudience = extractAiSearchTokens(query.targetAudience ?? "");
+
+  return dedupeTokens([...fromPersona, ...fromDemographics, ...fromAudience]);
+}
+
 function buildCompactAiSearch(
   query: ResearchQuery,
   tier: DiscoverySearchTier,
 ): string {
-  const segment = primarySegment(query);
-  const maxLen = aiSearchLimitForTier(tier);
-  const tokenBudget = tier === "minimal" ? 4 : 8;
+  const maxWords = aiSearchWordLimitForTier(tier);
+  const tokens = creatorSearchTokens(query);
 
-  const productTokens = extractAiSearchTokens(query.product.valueProposition);
-  const personaTokens = extractAiSearchTokens(segment?.persona ?? "");
-  const messageTokens = extractAiSearchTokens(query.product.keyMessages?.[0] ?? "");
-
-  const ordered = dedupeTokens([
-    ...productTokens.slice(0, tokenBudget),
-    ...personaTokens.slice(0, Math.ceil(tokenBudget / 2)),
-    ...messageTokens.slice(0, 2),
-  ]);
-
-  if (ordered.length === 0) {
-    return truncateAiSearch(
-      (segment?.persona ?? query.product.valueProposition).trim(),
-      maxLen,
+  if (tokens.length === 0) {
+    const fallback = truncateAiSearch(
+      primarySegment(query)?.persona ?? query.targetAudience ?? "lifestyle creator",
+      AI_SEARCH_API_MAX,
     );
+    return fallback.split(/\s+/).slice(0, maxWords).join(" ");
   }
 
-  let phrase = "";
-  for (const token of ordered) {
-    const next = phrase ? `${phrase} ${token}` : token;
-    if (next.length > maxLen) break;
-    phrase = next;
-  }
-
-  return truncateAiSearch(phrase, maxLen);
+  const phrase = tokens.slice(0, maxWords).join(" ");
+  if (phrase.length <= AI_SEARCH_API_MAX) return phrase;
+  return truncateAiSearch(phrase, AI_SEARCH_API_MAX);
 }
 
 export function mapPlatformToApi(platform: string): DiscoveryApiPlatform | null {
@@ -344,21 +356,23 @@ function primarySegment(query: ResearchQuery) {
   );
 }
 
-/** Compact natural-language search — tier caps: broad 100 chars, minimal 50. */
+/** Compact creator-type search — broad: 6 words, minimal retry: 3 words. */
 export function aiSearchPromptFromQuery(
   query: ResearchQuery,
   tier: DiscoverySearchTier = "broad",
 ): string {
   const aiSearch = buildCompactAiSearch(query, tier);
-  const maxLen = aiSearchLimitForTier(tier);
+  const maxWords = aiSearchWordLimitForTier(tier);
+  const wordCount = aiSearch.split(/\s+/).filter(Boolean).length;
+
   if (aiSearch.length > AI_SEARCH_API_MAX) {
     throw new Error(
       `ai_search exceeds Influencers.club limit (${aiSearch.length} > ${AI_SEARCH_API_MAX})`,
     );
   }
-  if (aiSearch.length > maxLen) {
+  if (wordCount > maxWords) {
     throw new Error(
-      `ai_search exceeds tier limit (${aiSearch.length} > ${maxLen})`,
+      `ai_search exceeds tier word limit (${wordCount} > ${maxWords})`,
     );
   }
   return aiSearch;

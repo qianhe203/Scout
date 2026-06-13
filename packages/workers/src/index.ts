@@ -74,6 +74,7 @@ export {
   assertTokenBudget,
   callLLM,
   exceedsTokenBudget,
+  llmTelemetryFromContext,
   TokenBudgetExceededError,
 } from "./llm.js";
 export type {

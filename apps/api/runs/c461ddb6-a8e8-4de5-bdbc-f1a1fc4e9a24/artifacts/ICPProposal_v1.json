@@ -1,0 +1,50 @@
+{
+  "meta": {
+    "id": "5aaa12ae-924f-4275-be8b-40dd765464c2",
+    "type": "ICPProposal",
+    "version": 1,
+    "runId": "c461ddb6-a8e8-4de5-bdbc-f1a1fc4e9a24",
+    "createdAt": "2026-06-13T20:44:42.243Z"
+  },
+  "data": {
+    "segments": [
+      {
+        "persona": "Tech company executives",
+        "demographics": "30-55, industry professionals, decision-makers in tech",
+        "channels": [
+          "linkedin",
+          "twitter",
+          "webinars"
+        ],
+        "rationale": "Evidence suggests tech leaders face talent shortages and seek solutions for AI integration",
+        "confidence": "high",
+        "evidence": [
+          {
+            "source": "client_brief",
+            "snippet": "Client stated audience: tech company execs"
+          },
+          {
+            "source": "web_search_category",
+            "snippet": "23 Incredible Buyer Personas Statistics for Businesses - Buyers often created through market research and data analysis."
+          },
+          {
+            "source": "web_search_category",
+            "url": "https://gauntletai.com/",
+            "snippet": "Gauntlet transforms engineers into AI-first operators to address talent issues in tech."
+          }
+        ]
+      }
+    ],
+    "clientStatedAudience": "tech company execs",
+    "clientAlignment": "confirmed",
+    "recommendedPrimarySegment": 0,
+    "evidenceSourceTypes": [
+      "client_brief",
+      "web_search_category",
+      "web_search_competitor",
+      "website"
+    ],
+    "icpRetryPasses": 0
+  },
+  "path": "runs/c461ddb6-a8e8-4de5-bdbc-f1a1fc4e9a24/artifacts/ICPProposal_v1.json"
+}

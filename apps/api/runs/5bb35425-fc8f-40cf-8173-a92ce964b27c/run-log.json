@@ -1,0 +1,48 @@
+{
+  "runId": "5bb35425-fc8f-40cf-8173-a92ce964b27c",
+  "stages": [
+    {
+      "stage": "icp",
+      "durationMs": 9190,
+      "llmCalls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "estimatedCostUsd": 0,
+      "toolCalls": [],
+      "checkpoint": {
+        "id": "CP0",
+        "passed": true
+      }
+    },
+    {
+      "stage": "product",
+      "durationMs": 10808,
+      "llmCalls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "estimatedCostUsd": 0,
+      "toolCalls": [],
+      "checkpoint": {
+        "id": "CP1",
+        "passed": true
+      }
+    },
+    {
+      "stage": "research",
+      "durationMs": 815,
+      "llmCalls": 0,
+      "inputTokens": 0,
+      "outputTokens": 0,
+      "estimatedCostUsd": 0,
+      "toolCalls": [],
+      "checkpoint": {
+        "id": "CP2",
+        "passed": true
+      }
+    }
+  ],
+  "totalInputTokens": 0,
+  "totalOutputTokens": 0,
+  "totalEstimatedCostUsd": 0,
+  "alarms": []
+}

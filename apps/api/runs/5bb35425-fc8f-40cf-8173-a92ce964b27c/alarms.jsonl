@@ -1,0 +1,5 @@
+{"type":"RESEARCH_SOURCE_DOWN","severity":"medium","context":{"source":"influencers_club","message":"Influencers.club discovery failed (400) for platform \"instagram\": {\"error\":\"input is too long. Must not exceed 150 characters.\"}"},"recommended_action":"Using seed adapter fallback; check platform mapping and INFLUENCERS_CLUB_API_KEY","timestamp":"2026-06-13T20:49:44.933Z"}
+{"type":"LOW_FIT_SCORES","severity":"medium","context":{"topScores":[61,60,59,58,58]},"recommended_action":"Re-score with revised rubric weights","timestamp":"2026-06-13T20:49:45.014Z"}
+{"type":"LOW_FIT_SCORES","severity":"medium","context":{"topScores":[61,60,59,58,58]},"recommended_action":"Re-score with revised rubric weights","timestamp":"2026-06-13T20:49:45.033Z"}
+{"type":"LOW_FIT_SCORES","severity":"medium","context":{"topScores":[61,60,59,58,58]},"recommended_action":"Re-score with revised rubric weights","timestamp":"2026-06-13T20:49:45.055Z"}
+{"type":"HUMAN_REQUIRED","severity":"high","context":{"stage":"score","retries":3},"recommended_action":"Review alarm feed and intervene manually","timestamp":"2026-06-13T20:49:45.065Z"}

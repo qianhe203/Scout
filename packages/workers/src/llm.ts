@@ -1,5 +1,6 @@
 import { estimateCostUsd } from "@scout/shared";
 import { trace, SpanStatusCode, type Tracer } from "@opentelemetry/api";
+import type { HarnessContext } from "@scout/harness";
 
 export interface LLMUsage {
   input_tokens: number;
@@ -45,6 +46,12 @@ export interface LLMCallOptions {
   provider: LLMProvider;
   telemetry?: LLMTelemetrySink;
   tracer?: Tracer;
+}
+
+export function llmTelemetryFromContext(ctx: HarnessContext): LLMTelemetrySink {
+  return {
+    append: (runId, event) => ctx.telemetry.sink.append(runId, event),
+  };
 }
 
 export async function callLLM(opts: LLMCallOptions): Promise<LLMResult> {

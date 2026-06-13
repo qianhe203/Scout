@@ -1,0 +1,14 @@
+{
+  "id": "CP1",
+  "passed": true,
+  "at": "2026-06-13T21:08:45.437Z",
+  "criteria": "CP1",
+  "details": {
+    "fields": [
+      "valueProposition",
+      "differentiators",
+      "toneGuidance",
+      "keyMessages"
+    ]
+  }
+}

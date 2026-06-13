@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import type { CreatorCandidate } from "@scout/shared";
 import {
-  AI_SEARCH_MAX_BROAD,
-  AI_SEARCH_MAX_MINIMAL,
+  AI_SEARCH_MAX_WORDS_BROAD,
+  AI_SEARCH_MAX_WORDS_MINIMAL,
   DISCOVERY_API_PLATFORMS,
   DISCOVERY_MAX_API_CALLS,
   InfluencersClubAdapterImpl,
@@ -56,18 +56,21 @@ const hairClipQuery: ResearchQuery = {
 };
 
 describe("InfluencersClubAdapterImpl", () => {
-  it("caps broad ai_search at 100 chars with high-signal tokens only", () => {
+  it("caps broad ai_search at 6 creator-type words (no product copy)", () => {
     const aiSearch = aiSearchPromptFromQuery(hairClipQuery, "broad");
-    expect(aiSearch.length).toBeLessThanOrEqual(AI_SEARCH_MAX_BROAD);
-    expect(aiSearch).not.toMatch(/designed|combining|perfect|everyday|seamlessly/i);
-    expect(aiSearch).toMatch(/hair|clip|millennial|style/i);
+    const words = aiSearch.split(/\s+/).filter(Boolean);
+    expect(words.length).toBeLessThanOrEqual(AI_SEARCH_MAX_WORDS_BROAD);
+    expect(aiSearch).not.toMatch(/hair|clip|superclip|durable|premium/i);
+    expect(aiSearch).toMatch(/style|millennial|fashion|women/i);
   });
 
-  it("caps minimal ai_search at 50 chars on retry", () => {
+  it("caps minimal ai_search at 3 creator-type words on retry", () => {
     const broad = aiSearchPromptFromQuery(hairClipQuery, "broad");
     const minimal = aiSearchPromptFromQuery(hairClipQuery, "minimal");
-    expect(minimal.length).toBeLessThanOrEqual(AI_SEARCH_MAX_MINIMAL);
+    const words = minimal.split(/\s+/).filter(Boolean);
+    expect(words.length).toBeLessThanOrEqual(AI_SEARCH_MAX_WORDS_MINIMAL);
     expect(minimal.length).toBeLessThanOrEqual(broad.length);
+    expect(minimal).not.toMatch(/hair|clip|superclip/i);
   });
   it("maps ICP channels to supported discovery platforms", () => {
     expect(mapPlatformToApi("linkedin")).toBeNull();
@@ -142,10 +145,8 @@ describe("InfluencersClubAdapterImpl", () => {
     }
   });
 
-  it("uses broad ai_search on first pass and minimal filters on retry", async () => {
-    vi.stubEnv("INFLUENCERS_CLUB_RETRY", "true");
-    try {
-      const fetchImpl = vi
+  it("uses broad ai_search on first pass and shorter ai_search on retry", async () => {
+    const fetchImpl = vi
         .fn()
         .mockResolvedValueOnce({
           ok: true,
@@ -173,25 +174,22 @@ describe("InfluencersClubAdapterImpl", () => {
       const lastBody = JSON.parse(String(fetchImpl.mock.calls[2]?.[1]?.body));
 
       expect(firstBody.filters.ai_search).toBeTruthy();
-      expect(String(firstBody.filters.ai_search).length).toBeLessThanOrEqual(
-        AI_SEARCH_MAX_BROAD,
+      expect(String(firstBody.filters.ai_search).split(/\s+/).length).toBeLessThanOrEqual(
+        AI_SEARCH_MAX_WORDS_BROAD,
       );
       expect(lastBody.filters.number_of_followers).toEqual({
         min: 1_000,
         max: 5_000_000,
       });
       expect(lastBody.filters.ai_search).toBeTruthy();
-      expect(String(lastBody.filters.ai_search).length).toBeLessThanOrEqual(
-        AI_SEARCH_MAX_MINIMAL,
+      expect(String(lastBody.filters.ai_search).split(/\s+/).length).toBeLessThanOrEqual(
+        AI_SEARCH_MAX_WORDS_MINIMAL,
       );
       expect(creators).toHaveLength(1);
-    } finally {
-      vi.unstubAllEnvs();
-    }
   });
 
-  it("skips minimal retry when INFLUENCERS_CLUB_RETRY is unset", async () => {
-    vi.stubEnv("INFLUENCERS_CLUB_RETRY", "");
+  it("skips minimal retry when INFLUENCERS_CLUB_RETRY=false", async () => {
+    vi.stubEnv("INFLUENCERS_CLUB_RETRY", "false");
     try {
       expect(discoveryRetryEnabled()).toBe(false);
 

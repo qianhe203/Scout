@@ -1,6 +1,7 @@
 "use client";
 
 import type { RunEvent } from "@scout/shared";
+import type { RunSummary } from "../lib/api";
 
 interface CostTotals {
   inputTokens: number;
@@ -40,8 +41,28 @@ function deriveCosts(events: RunEvent[]): CostTotals {
   );
 }
 
-export function CostPanel({ events }: { events: RunEvent[] }) {
+export function CostPanel({
+  events,
+  telemetry,
+}: {
+  events: RunEvent[];
+  telemetry?: RunSummary["telemetry"];
+}) {
   const costs = deriveCosts(events);
+  const useTelemetryFallback =
+    costs.calls.length === 0 &&
+    telemetry != null &&
+    telemetry.totalInputTokens + telemetry.totalOutputTokens > 0;
+
+  const inputTokens = useTelemetryFallback
+    ? telemetry.totalInputTokens
+    : costs.inputTokens;
+  const outputTokens = useTelemetryFallback
+    ? telemetry.totalOutputTokens
+    : costs.outputTokens;
+  const estimatedCostUsd = useTelemetryFallback
+    ? telemetry.totalEstimatedCostUsd
+    : costs.estimatedCostUsd;
 
   return (
     <section className="panel">
@@ -49,19 +70,19 @@ export function CostPanel({ events }: { events: RunEvent[] }) {
       <dl className="cost-summary">
         <div>
           <dt>Input tokens</dt>
-          <dd>{costs.inputTokens.toLocaleString()}</dd>
+          <dd>{inputTokens.toLocaleString()}</dd>
         </div>
         <div>
           <dt>Output tokens</dt>
-          <dd>{costs.outputTokens.toLocaleString()}</dd>
+          <dd>{outputTokens.toLocaleString()}</dd>
         </div>
         <div>
           <dt>Estimated cost</dt>
-          <dd>${costs.estimatedCostUsd.toFixed(4)}</dd>
+          <dd>${estimatedCostUsd.toFixed(4)}</dd>
         </div>
         <div>
           <dt>LLM calls</dt>
-          <dd>{costs.calls.length}</dd>
+          <dd>{useTelemetryFallback ? "—" : costs.calls.length}</dd>
         </div>
       </dl>
       {costs.calls.length > 0 ? (
@@ -74,6 +95,11 @@ export function CostPanel({ events }: { events: RunEvent[] }) {
             </li>
           ))}
         </ul>
+      ) : useTelemetryFallback ? (
+        <p className="muted">
+          Totals from run telemetry. Per-call breakdown appears on new runs after
+          the cost tracking fix.
+        </p>
       ) : (
         <p className="muted">No LLM calls in this run yet.</p>
       )}

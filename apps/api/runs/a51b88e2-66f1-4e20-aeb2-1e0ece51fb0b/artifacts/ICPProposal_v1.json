@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "id": "4a439896-e05b-4201-954a-736c82a9ef59",
+    "type": "ICPProposal",
+    "version": 1,
+    "runId": "a51b88e2-66f1-4e20-aeb2-1e0ece51fb0b",
+    "createdAt": "2026-06-13T19:09:43.904Z"
+  },
+  "data": {
+    "segments": [
+      {
+        "persona": "Tech company executives focused on AI talent development",
+        "demographics": "40-55, C-level or senior tech leaders, enterprise decision-makers",
+        "channels": [
+          "linkedin",
+          "twitter",
+          "industry newsletters",
+          "tech conferences"
+        ],
+        "rationale": "Client brief identifies tech company execs as primary audience; web search and website evidence confirm focus on talent and AI leadership roles",
+        "confidence": "high",
+        "evidence": [
+          {
+            "source": "client_brief",
+            "snippet": "Client stated audience: Tech company execs"
+          },
+          {
+            "source": "website",
+            "snippet": "Gauntlet transforms engineers into AI-first operators because most AI pilots don't have a technology problem, they have a talent problem"
+          },
+          {
+            "source": "web_search_category",
+            "snippet": "Buyer personas are created through market research and data analysis. They often encompass various aspects of an individual such as demographics, behaviors"
+          }
+        ]
+      },
+      {
+        "persona": "Engineering leaders seeking AI workforce solutions",
+        "demographics": "35-50, tech team leads, engineering directors, CTOs",
+        "channels": [
+          "linkedin",
+          "github",
+          "tech blogs",
+          "cloud security forums"
+        ],
+        "rationale": "Website and competitor research show focus on engineering talent and AI integration; aligns with engineering leaders' needs",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "source": "website",
+            "snippet": "Hire Proven Talent Upskill Your Team How We Prove They Can Ship We can train your existing team to build AI-native or place engineers who've already proven it"
+          },
+          {
+            "source": "web_search_competitor",
+            "snippet": "Top 10 Gauntlet Alternatives & Competitors in 2026 - G2: The best Gauntlet alternatives are Wiz, FortiCNAPP, and Scrut Automation. Find top-ranking free & paid apps similar to Gauntlet for your Cloud Security"
+          },
+          {
+            "source": "web_search_category",
+            "snippet": "Building a Buyer Persona to Understand Your Customer: When 71% of companies who exceed their revenue goals have buyer personas, versus only 26% of companies who miss their goals, it's easy to see that you have to understand your buyers in order to effectively market to them"
+          }
+        ]
+      }
+    ],
+    "clientStatedAudience": "Tech company execs",
+    "clientAlignment": "confirmed",
+    "recommendedPrimarySegment": 0,
+    "evidenceSourceTypes": [
+      "client_brief",
+      "website",
+      "web_search_category",
+      "web_search_competitor"
+    ],
+    "icpRetryPasses": 0
+  },
+  "path": "runs/a51b88e2-66f1-4e20-aeb2-1e0ece51fb0b/artifacts/ICPProposal_v1.json"
+}

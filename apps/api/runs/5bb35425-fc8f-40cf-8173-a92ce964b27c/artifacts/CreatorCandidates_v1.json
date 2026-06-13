@@ -1,0 +1,142 @@
+{
+  "meta": {
+    "id": "6104ae0e-3baa-410b-855b-6f6503a473f2",
+    "type": "CreatorCandidates",
+    "version": 1,
+    "runId": "5bb35425-fc8f-40cf-8173-a92ce964b27c",
+    "createdAt": "2026-06-13T20:49:44.945Z"
+  },
+  "data": {
+    "creators": [
+      {
+        "id": "creator_007",
+        "handle": "@glowup_gia",
+        "platform": "tiktok",
+        "followerCount": 175000,
+        "engagementRate": 0.063,
+        "estimatedRate": 1100,
+        "audienceTags": [
+          "beauty",
+          "skincare",
+          "gen-z"
+        ],
+        "scandalFlag": true,
+        "trendingScore": 0.77,
+        "source": "seed"
+      },
+      {
+        "id": "creator_001",
+        "handle": "@homeworkout_hannah",
+        "platform": "tiktok",
+        "followerCount": 82000,
+        "engagementRate": 0.058,
+        "estimatedRate": 650,
+        "audienceTags": [
+          "fitness",
+          "home-workout",
+          "millennials"
+        ],
+        "scandalFlag": false,
+        "trendingScore": 0.72,
+        "source": "seed"
+      },
+      {
+        "id": "creator_012",
+        "handle": "@lift_with_leo",
+        "platform": "tiktok",
+        "followerCount": 91000,
+        "engagementRate": 0.055,
+        "estimatedRate": 720,
+        "audienceTags": [
+          "fitness",
+          "strength",
+          "millennials"
+        ],
+        "scandalFlag": false,
+        "trendingScore": 0.69,
+        "source": "seed"
+      },
+      {
+        "id": "creator_011",
+        "handle": "@yoga_yara",
+        "platform": "instagram",
+        "followerCount": 112000,
+        "engagementRate": 0.049,
+        "estimatedRate": 980,
+        "audienceTags": [
+          "yoga",
+          "wellness",
+          "millennials"
+        ],
+        "scandalFlag": false,
+        "trendingScore": 0.61,
+        "source": "seed"
+      },
+      {
+        "id": "creator_024",
+        "handle": "@studio_sweat",
+        "platform": "instagram",
+        "followerCount": 88000,
+        "engagementRate": 0.046,
+        "estimatedRate": 790,
+        "audienceTags": [
+          "home-workout",
+          "fitness",
+          "millennials"
+        ],
+        "scandalFlag": false,
+        "trendingScore": 0.64,
+        "source": "seed"
+      },
+      {
+        "id": "creator_005",
+        "handle": "@parenting_patch",
+        "platform": "instagram",
+        "followerCount": 98000,
+        "engagementRate": 0.045,
+        "estimatedRate": 900,
+        "audienceTags": [
+          "parenting",
+          "family",
+          "millennials"
+        ],
+        "scandalFlag": false,
+        "trendingScore": 0.6,
+        "source": "seed"
+      },
+      {
+        "id": "creator_021",
+        "handle": "@pilates_paula",
+        "platform": "instagram",
+        "followerCount": 124000,
+        "engagementRate": 0.044,
+        "estimatedRate": 1050,
+        "audienceTags": [
+          "pilates",
+          "wellness",
+          "millennials"
+        ],
+        "scandalFlag": false,
+        "trendingScore": 0.63,
+        "source": "seed"
+      },
+      {
+        "id": "creator_002",
+        "handle": "@mindful_maya",
+        "platform": "instagram",
+        "followerCount": 145000,
+        "engagementRate": 0.041,
+        "estimatedRate": 1200,
+        "audienceTags": [
+          "wellness",
+          "mindfulness",
+          "millennials"
+        ],
+        "scandalFlag": false,
+        "trendingScore": 0.55,
+        "source": "seed"
+      }
+    ]
+  },
+  "path": "runs/5bb35425-fc8f-40cf-8173-a92ce964b27c/artifacts/CreatorCandidates_v1.json"
+}

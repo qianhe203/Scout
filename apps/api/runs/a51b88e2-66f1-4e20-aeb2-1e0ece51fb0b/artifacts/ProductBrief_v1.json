@@ -1,0 +1,26 @@
+{
+  "meta": {
+    "id": "d7171ad7-c173-4b5f-896d-b1ac92ddc08b",
+    "type": "ProductBrief",
+    "version": 1,
+    "runId": "a51b88e2-66f1-4e20-aeb2-1e0ece51fb0b",
+    "createdAt": "2026-06-13T19:09:46.514Z"
+  },
+  "data": {
+    "valueProposition": "Empowers tech executives to solve their AI talent gap by transforming engineers into AI-first operators.",
+    "differentiators": [
+      "Focuses on the talent problem, not the technology problem",
+      "Designed specifically for C-level and senior tech leaders"
+    ],
+    "toneGuidance": "Confident, strategic, and solution-oriented, aligned with executive decision-making language",
+    "keyMessages": [
+      "Most AI pilots fail due to talent shortages, not technical limitations.",
+      "Gauntlet Graduates delivers the AI-first operators your team needs to succeed."
+    ],
+    "avoidPhrases": [
+      "AI tools",
+      "Technical skills"
+    ]
+  },
+  "path": "runs/a51b88e2-66f1-4e20-aeb2-1e0ece51fb0b/artifacts/ProductBrief_v1.json"
+}

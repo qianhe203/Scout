@@ -1,0 +1,2 @@
+{"kind":"stage_started","stage":"icp"}
+{"kind":"alarm","alarm":{"type":"RUN_FAILED","context":{"message":"The model `qwen3-coder` does not exist or you do not have access to it."},"severity":"high","recommended_action":"Check API logs","timestamp":"2026-06-13T20:31:53.659Z"}}

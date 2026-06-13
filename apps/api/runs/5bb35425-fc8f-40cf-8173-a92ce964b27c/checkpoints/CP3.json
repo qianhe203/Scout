@@ -1,0 +1,30 @@
+{
+  "id": "CP3",
+  "passed": false,
+  "at": "2026-06-13T20:49:45.055Z",
+  "criteria": "CP3",
+  "details": {
+    "topScores": [
+      {
+        "id": "creator_001",
+        "fitScore": 61
+      },
+      {
+        "id": "creator_012",
+        "fitScore": 60
+      },
+      {
+        "id": "creator_011",
+        "fitScore": 59
+      },
+      {
+        "id": "creator_024",
+        "fitScore": 58
+      },
+      {
+        "id": "creator_005",
+        "fitScore": 58
+      }
+    ]
+  }
+}

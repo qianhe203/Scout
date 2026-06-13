@@ -6,7 +6,7 @@ import type {
 import { ProductBriefSchema } from "@scout/shared";
 import type { HarnessContext, Worker } from "@scout/harness";
 import type { WebsiteAdapter } from "./adapters/website.js";
-import { callLLM, type LLMProvider } from "./llm.js";
+import { callLLM, llmTelemetryFromContext, type LLMProvider } from "./llm.js";
 import { createProviderFromEnv, defaultLlmModelFromEnv } from "./llm-provider.js";
 import { extractJson } from "./utils/json.js";
 
@@ -158,6 +158,7 @@ export class ProductWorker implements Worker {
           },
         ],
         provider: this.provider,
+        telemetry: llmTelemetryFromContext(ctx),
       });
 
       try {

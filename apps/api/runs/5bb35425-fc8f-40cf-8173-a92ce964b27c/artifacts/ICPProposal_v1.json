@@ -1,0 +1,47 @@
+{
+  "meta": {
+    "id": "b410617d-5fd7-460c-b050-e728e3dd748f",
+    "type": "ICPProposal",
+    "version": 1,
+    "runId": "5bb35425-fc8f-40cf-8173-a92ce964b27c",
+    "createdAt": "2026-06-13T20:49:33.250Z"
+  },
+  "data": {
+    "segments": [
+      {
+        "persona": "Style-conscious millennials",
+        "demographics": "25-35, female, urban",
+        "channels": [
+          "instagram",
+          "tiktok",
+          "pinterest"
+        ],
+        "rationale": "Research indicates high engagement of millennials with beauty and fashion accessory content, leading to better conversion rates.",
+        "confidence": "high",
+        "evidence": [
+          {
+            "source": "web_search_category",
+            "snippet": "A study by ITSMA revealed that 44% of marketers use buyer personas for their businesses."
+          },
+          {
+            "source": "web_search_competitor",
+            "snippet": "The SuperClip is where cuteness meets serious hold — crafted from durable acetate that's made to go the distance."
+          },
+          {
+            "source": "creator_graph",
+            "snippet": "Top matching creators cluster around parenting, family, millennials audiences. Tags: parenting, family, millennials, beauty, skincare."
+          }
+        ]
+      }
+    ],
+    "clientAlignment": "no_client_input",
+    "recommendedPrimarySegment": 0,
+    "evidenceSourceTypes": [
+      "web_search_category",
+      "web_search_competitor",
+      "creator_graph"
+    ],
+    "icpRetryPasses": 0
+  },
+  "path": "runs/5bb35425-fc8f-40cf-8173-a92ce964b27c/artifacts/ICPProposal_v1.json"
+}

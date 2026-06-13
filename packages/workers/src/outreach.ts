@@ -6,7 +6,7 @@ import type {
 } from "@scout/shared";
 import { OutreachDraftsSchema } from "@scout/shared";
 import type { HarnessContext, Worker } from "@scout/harness";
-import { callLLM, type LLMProvider } from "./llm.js";
+import { callLLM, llmTelemetryFromContext, type LLMProvider } from "./llm.js";
 import { createProviderFromEnv, defaultLlmModelFromEnv } from "./llm-provider.js";
 import { extractJson } from "./utils/json.js";
 
@@ -102,6 +102,7 @@ export class OutreachWorker implements Worker {
           },
         ],
         provider: this.provider,
+        telemetry: llmTelemetryFromContext(ctx),
       });
 
       try {

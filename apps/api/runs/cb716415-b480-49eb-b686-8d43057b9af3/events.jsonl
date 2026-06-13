@@ -1,0 +1,25 @@
+{"kind":"stage_started","stage":"icp"}
+{"kind":"artifact_written","artifactType":"ICPProposal","version":1,"path":"runs/cb716415-b480-49eb-b686-8d43057b9af3/artifacts/ICPProposal_v1.json"}
+{"kind":"checkpoint","id":"CP0","passed":true,"details":{"evidenceSourceTypes":["client_brief","web_search_category","website"],"segmentCount":2}}
+{"kind":"stage_completed","stage":"icp","durationMs":13516}
+{"kind":"stage_started","stage":"product"}
+{"kind":"artifact_written","artifactType":"ProductBrief","version":1,"path":"runs/cb716415-b480-49eb-b686-8d43057b9af3/artifacts/ProductBrief_v1.json"}
+{"kind":"checkpoint","id":"CP1","passed":true,"details":{"fields":["valueProposition","differentiators","toneGuidance","keyMessages"]}}
+{"kind":"stage_completed","stage":"product","durationMs":2711}
+{"kind":"stage_started","stage":"research"}
+{"kind":"alarm","alarm":{"type":"RESEARCH_SOURCE_DOWN","severity":"medium","context":{"source":"influencers_club","message":"Influencers.club discovery failed (400): {\"error\":{\"platform\":[\"\\\"linkedin\\\" is not a valid choice.\"]}}"},"recommended_action":"Using seed adapter fallback; verify INFLUENCERS_CLUB_API_KEY","timestamp":"2026-06-13T19:54:49.144Z"}}
+{"kind":"artifact_written","artifactType":"CreatorCandidates","version":1,"path":"runs/cb716415-b480-49eb-b686-8d43057b9af3/artifacts/CreatorCandidates_v1.json"}
+{"kind":"checkpoint","id":"CP2","passed":false,"details":{"candidateCount":0,"platformCount":0,"minCandidates":5,"minPlatforms":2}}
+{"kind":"alarm","alarm":{"type":"INSUFFICIENT_CANDIDATES","severity":"medium","context":{"candidateCount":0,"platformCount":0},"recommended_action":"Retry ResearchWorker with broader query","timestamp":"2026-06-13T19:54:49.162Z"}}
+{"kind":"stage_started","stage":"research"}
+{"kind":"alarm","alarm":{"type":"RESEARCH_SOURCE_DOWN","severity":"medium","context":{"source":"influencers_club","message":"Influencers.club discovery failed (400): {\"error\":{\"platform\":[\"\\\"linkedin\\\" is not a valid choice.\"]}}"},"recommended_action":"Using seed adapter fallback; verify INFLUENCERS_CLUB_API_KEY","timestamp":"2026-06-13T19:54:49.391Z"}}
+{"kind":"artifact_written","artifactType":"CreatorCandidates","version":2,"path":"runs/cb716415-b480-49eb-b686-8d43057b9af3/artifacts/CreatorCandidates_v2.json"}
+{"kind":"checkpoint","id":"CP2","passed":false,"details":{"candidateCount":0,"platformCount":0,"minCandidates":5,"minPlatforms":2}}
+{"kind":"alarm","alarm":{"type":"INSUFFICIENT_CANDIDATES","severity":"medium","context":{"candidateCount":0,"platformCount":0},"recommended_action":"Retry ResearchWorker with broader query","timestamp":"2026-06-13T19:54:49.423Z"}}
+{"kind":"stage_started","stage":"research"}
+{"kind":"alarm","alarm":{"type":"RESEARCH_SOURCE_DOWN","severity":"medium","context":{"source":"influencers_club","message":"Influencers.club discovery failed (400): {\"error\":{\"platform\":[\"\\\"linkedin\\\" is not a valid choice.\"]}}"},"recommended_action":"Using seed adapter fallback; verify INFLUENCERS_CLUB_API_KEY","timestamp":"2026-06-13T19:54:49.661Z"}}
+{"kind":"artifact_written","artifactType":"CreatorCandidates","version":3,"path":"runs/cb716415-b480-49eb-b686-8d43057b9af3/artifacts/CreatorCandidates_v3.json"}
+{"kind":"checkpoint","id":"CP2","passed":false,"details":{"candidateCount":0,"platformCount":0,"minCandidates":5,"minPlatforms":2}}
+{"kind":"alarm","alarm":{"type":"INSUFFICIENT_CANDIDATES","severity":"medium","context":{"candidateCount":0,"platformCount":0},"recommended_action":"Retry ResearchWorker with broader query","timestamp":"2026-06-13T19:54:49.685Z"}}
+{"kind":"alarm","alarm":{"type":"HUMAN_REQUIRED","severity":"high","context":{"stage":"research","retries":3},"recommended_action":"Review alarm feed and intervene manually","timestamp":"2026-06-13T19:54:49.717Z"}}
+{"kind":"human_required","reason":"Max retries exceeded at stage research"}

@@ -4,7 +4,7 @@ import type { HarnessContext } from "@scout/harness";
 import type { CreatorGraphAdapter } from "./adapters/creator-graph.js";
 import type { WebSearchAdapter } from "./adapters/web-search.js";
 import type { WebsiteAdapter } from "./adapters/website.js";
-import { callLLM, type LLMProvider } from "./llm.js";
+import { callLLM, llmTelemetryFromContext, type LLMProvider } from "./llm.js";
 import { createProviderFromEnv, defaultLlmModelFromEnv } from "./llm-provider.js";
 import {
   enrichIcpProposal,
@@ -303,6 +303,7 @@ export class ICPWorker {
           },
         ],
         provider: this.provider,
+        telemetry: llmTelemetryFromContext(ctx),
       });
 
       try {

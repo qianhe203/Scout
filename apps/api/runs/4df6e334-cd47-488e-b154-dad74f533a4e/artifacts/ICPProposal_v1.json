@@ -1,0 +1,76 @@
+{
+  "meta": {
+    "id": "9cfb2f14-5a1e-4850-a097-d7b5101589e9",
+    "type": "ICPProposal",
+    "version": 1,
+    "runId": "4df6e334-cd47-488e-b154-dad74f533a4e",
+    "createdAt": "2026-06-13T19:45:26.561Z"
+  },
+  "data": {
+    "segments": [
+      {
+        "persona": "Tech company executives seeking AI talent solutions",
+        "demographics": "40-60, C-level or senior tech leadership, urban, enterprise-focused",
+        "channels": [
+          "linkedin",
+          "twitter",
+          "company_website",
+          "industry_newsletters"
+        ],
+        "rationale": "Client brief and website content emphasize targeting tech company execs who face talent gaps in AI implementation. Web search evidence supports focusing on executive personas with decision-making power.",
+        "confidence": "high",
+        "evidence": [
+          {
+            "source": "client_brief",
+            "snippet": "Client stated audience: Tech company exec"
+          },
+          {
+            "source": "website",
+            "snippet": "Gauntlet transforms engineers into AI-first operators because most AI pilots don't have a technology problem, they have a talent problem."
+          },
+          {
+            "source": "web_search_category",
+            "snippet": "A Comprehensive Approach to Creating Buyer Personas: Creating a buyer persona involves assigning a name, avatar, and demographic details such as age, education, and job title to humanize the"
+          }
+        ]
+      },
+      {
+        "persona": "Senior software engineers with AI focus",
+        "demographics": "30-50, urban, tech industry professionals, strong technical background",
+        "channels": [
+          "linkedin",
+          "github",
+          "dev.to",
+          "technical_conferences"
+        ],
+        "rationale": "The product is designed to upskill engineers. Web search and competitor analysis show that engineers are a core target for AI-focused talent products.",
+        "confidence": "medium",
+        "evidence": [
+          {
+            "source": "website",
+            "snippet": "We can train your existing team to build AI-native or place engineers who've already proven it"
+          },
+          {
+            "source": "web_search_competitor",
+            "snippet": "The best Gauntlet alternatives are Wiz, FortiCNAPP, and Scrut Automation. Find top-ranking free & paid apps similar to Gauntlet for your Cloud Security"
+          },
+          {
+            "source": "web_search_category",
+            "snippet": "Buyer Personas aren't demographics : r/Marketingcurated - Reddit: # Buyer Personas aren’t demographics : r/Marketingcurated"
+          }
+        ]
+      }
+    ],
+    "clientStatedAudience": "Tech company exec",
+    "clientAlignment": "confirmed",
+    "recommendedPrimarySegment": 0,
+    "evidenceSourceTypes": [
+      "client_brief",
+      "website",
+      "web_search_category",
+      "web_search_competitor"
+    ],
+    "icpRetryPasses": 0
+  },
+  "path": "runs/4df6e334-cd47-488e-b154-dad74f533a4e/artifacts/ICPProposal_v1.json"
+}

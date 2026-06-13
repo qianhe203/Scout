@@ -21,6 +21,7 @@ import {
   type HarnessContext,
   type RunEventHandler,
   type Stage,
+  type TelemetrySink,
   type WorkerRegistry,
 } from "./types.js";
 
@@ -121,12 +122,34 @@ export class Orchestrator {
     artifacts: HarnessContext["artifacts"],
     retryCounts: HarnessContext["retryCounts"],
   ): HarnessContext {
+    const writer = this.telemetryWriter;
+    const sink: TelemetrySink = {
+      append: async (id, line) => {
+        await writer.append(id, line);
+        if (line.kind === "llm_call") {
+          await this.emit({
+            kind: "llm_call",
+            worker: String(line.worker),
+            model: String(line.model),
+            inputTokens: Number(line.inputTokens ?? 0),
+            outputTokens: Number(line.outputTokens ?? 0),
+            estimatedCostUsd: Number(line.estimatedCostUsd ?? 0),
+            latencyMs: Number(line.latencyMs ?? 0),
+          });
+        }
+      },
+      exceedsTokenBudget: (id) => writer.exceedsTokenBudget(id),
+      exceedsCostCap: (id) => writer.exceedsCostCap(id),
+      recordStageTelemetry: (id, entry) =>
+        writer.recordStageTelemetry(id, entry),
+    };
+
     return {
       runId,
       clientBrief: brief,
       artifacts,
       config: this.config,
-      telemetry: createTelemetryContext(this.telemetryWriter),
+      telemetry: createTelemetryContext(sink),
       retryCounts,
       emitAlarm: async (alarm) => {
         await this.alarms.emit(runId, alarm);
