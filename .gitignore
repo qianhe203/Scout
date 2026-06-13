@@ -6,5 +6,6 @@ dist
 .env.local
 .env.*.local
 /runs/
+apps/api/runs/
 *.log
 .DS_Store

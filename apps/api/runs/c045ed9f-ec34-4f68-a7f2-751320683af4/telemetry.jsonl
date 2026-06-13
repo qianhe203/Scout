@@ -1,4 +1,0 @@
-{"kind":"llm_call","worker":"ICPWorker","model":"gpt-4o-mini","inputTokens":1471,"outputTokens":469,"estimatedCostUsd":0.00050205,"latencyMs":7353}
-{"kind":"stage_telemetry","stage":"icp","durationMs":9043,"llmCalls":0,"inputTokens":0,"outputTokens":0,"estimatedCostUsd":0,"toolCalls":[],"checkpoint":{"id":"CP0","passed":true}}
-{"kind":"llm_call","worker":"ProductWorker","model":"gpt-4o-mini","inputTokens":934,"outputTokens":144,"estimatedCostUsd":0.00022649999999999998,"latencyMs":3647}
-{"kind":"stage_telemetry","stage":"product","durationMs":4013,"llmCalls":0,"inputTokens":0,"outputTokens":0,"estimatedCostUsd":0,"toolCalls":[],"checkpoint":{"id":"CP1","passed":true}}

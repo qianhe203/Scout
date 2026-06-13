@@ -1,2 +1,0 @@
-{"kind":"stage_telemetry","stage":"icp","durationMs":15106,"llmCalls":0,"inputTokens":0,"outputTokens":0,"estimatedCostUsd":0,"toolCalls":[],"checkpoint":{"id":"CP0","passed":true}}
-{"kind":"stage_telemetry","stage":"product","durationMs":3105,"llmCalls":0,"inputTokens":0,"outputTokens":0,"estimatedCostUsd":0,"toolCalls":[],"checkpoint":{"id":"CP1","passed":true}}
