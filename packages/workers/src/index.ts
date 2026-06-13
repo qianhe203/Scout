@@ -1,26 +1,8 @@
-import type { ClientBrief } from "@scout/shared";
+import type { HarnessContext, Worker, WorkerRegistry } from "@scout/harness";
 
-export interface HarnessContext {
-  runId: string;
-  clientBrief: ClientBrief;
-  artifacts: Record<string, unknown>;
-  feedback?: unknown;
-}
+export type { HarnessContext, Worker, WorkerRegistry };
 
-export interface Worker {
-  name: string;
-  run(ctx: HarnessContext): Promise<unknown>;
-}
-
-export interface WorkerRegistry {
-  icp: Worker;
-  product: Worker;
-  research: Worker;
-  score: Worker;
-  outreach: Worker;
-}
-
-/** Placeholder workers — implemented in U3/U6. */
+/** Placeholder workers — replaced by real implementations in U5/U8/U9. */
 export function createStubWorkers(): WorkerRegistry {
   const stub = (name: string): Worker => ({
     name,
@@ -37,3 +19,12 @@ export function createStubWorkers(): WorkerRegistry {
     outreach: stub("OutreachWorker"),
   };
 }
+
+export { callLLM, exceedsTokenBudget } from "./llm.js";
+export type {
+  LLMCallOptions,
+  LLMProvider,
+  LLMResult,
+  LLMTelemetrySink,
+} from "./llm.js";
+export { createProviderFromEnv, MockLLMProvider } from "./llm-provider.js";
