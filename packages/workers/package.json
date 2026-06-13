@@ -14,12 +14,17 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "vitest run --config ../../vitest.config.ts"
   },
   "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@scout/harness": "workspace:*",
     "@scout/shared": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.7.2"
+    "@types/node": "^22.10.2",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.5"
   }
 }

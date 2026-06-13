@@ -4,6 +4,7 @@ import { streamSSE } from "hono/streaming";
 import { randomUUID } from "node:crypto";
 import { ClientBriefSchema, type RunEvent } from "@scout/shared";
 import { Orchestrator } from "@scout/harness";
+import { createStubWorkers } from "@scout/workers";
 
 const runs = new Map<string, { status: string; events: RunEvent[] }>();
 
@@ -30,15 +31,24 @@ export function createRunsRouter(config: {
     const runId = randomUUID();
     runs.set(runId, { status: "pending", events: [] });
 
-    const orchestrator = new Orchestrator({
-      runsDir: config.runsDir,
-      runTokenBudget: Number(process.env.RUN_TOKEN_BUDGET ?? 50_000),
-      runCostCapUsd: Number(process.env.RUN_COST_CAP ?? 2),
-      maxRetriesPerStage: 2,
-    });
+    const orchestrator = new Orchestrator(
+      {
+        runsDir: config.runsDir,
+        runTokenBudget: Number(process.env.RUN_TOKEN_BUDGET ?? 50_000),
+        runCostCapUsd: Number(process.env.RUN_COST_CAP ?? 2),
+        maxRetriesPerStage: 2,
+      },
+      createStubWorkers(),
+      (event) => {
+        const entry = runs.get(runId);
+        if (entry) entry.events.push(event);
+      },
+    );
 
-    // U4: run async, stream events via pub/sub
-    void orchestrator.startRun(runId, parsed.data).catch((err: unknown) => {
+    void orchestrator.startRun(runId, parsed.data).then(() => {
+      const entry = runs.get(runId);
+      if (entry) entry.status = "running";
+    }).catch((err: unknown) => {
       const message = err instanceof Error ? err.message : String(err);
       const entry = runs.get(runId);
       if (entry) {
@@ -49,7 +59,7 @@ export function createRunsRouter(config: {
             type: "RUN_FAILED",
             context: { message },
             severity: "high",
-            recommended_action: "Check API logs and HARNESS_PLANNING.md U2/U4",
+            recommended_action: "Check API logs",
             timestamp: new Date().toISOString(),
           },
         });
@@ -74,12 +84,6 @@ export function createRunsRouter(config: {
       for (const event of run.events) {
         await stream.writeSSE({ data: JSON.stringify(event) });
       }
-      await stream.writeSSE({
-        data: JSON.stringify({
-          kind: "human_required",
-          reason: "Orchestrator stub — pipeline not wired yet (U2/U4)",
-        }),
-      });
     });
   });
 
