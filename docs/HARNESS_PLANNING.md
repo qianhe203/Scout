@@ -334,6 +334,16 @@ ResearchWorker reuses `ICPProposal` — it does **not** re-run ICP research.
 
 Shared `websiteAdapter` code; different prompts and output artifacts. ProductWorker focuses on tone/value prop — not audience discovery.
 
+**ProductWorker role:** translation layer from messy `ClientBrief` to machine-consumable `ProductBrief`. Value is **consistency and constraint** for downstream workers (Research, Score, Outreach), not novel market discovery. No Tavily/Serper, no new evidence types, no segment invention.
+
+**Three lightweight enrichments (no new adapters):**
+
+1. **ICP reframe** — When `clientAlignment` is `contradicted` or `partial`, messaging targets the *researched* primary segment (persona, rationale, channels), not `clientStatedAudience`.
+2. **Reuse ICP evidence snippets** — Pull `website`, `product_page`, and `web_search_competitor` snippets already in `ICPProposal.segments[].evidence[]` into the synthesis prompt (no second web search). Use for differentiators and page-grounded value props.
+3. **CP1 segment fit** — Deterministic check that at least one `keyMessage` shares meaningful token overlap with the primary segment `persona` + `rationale` (simple word overlap, not LLM).
+
+Optional `websiteAdapter.fetch()` only when ICP evidence lacks page snippets and URLs are set — prefer ICP evidence first to avoid duplicate fetches.
+
 ---
 
 ## Differentiation — what Scout adds beyond Influencers.club
@@ -357,7 +367,7 @@ Influencers.club is the **data pipe**. Scout adds **constraint orchestration** a
 | Worker | Logic beyond raw API results |
 |--------|---------------------------|
 | **ICPWorker** | Multi-source research (≥3 evidence types); automated CP0 retry |
-| **ProductWorker** | Value props + tone for downstream scoring and outreach |
+| **ProductWorker** | ICP-informed translation: reframe when alignment off, reuse ICP page/competitor snippets, risk-calibrated voice |
 | **ResearchWorker** | Query translator — ICP + ProductBrief → Influencers.club filters |
 | **ScoreWorker** | Client-specific fit rubric, micro-vs-macro thesis, per-creator `rationale` |
 | **OutreachWorker** | Brand-voice drafts; professionalism checked by harness CP4, not inline |
@@ -611,7 +621,7 @@ function enforceBudget(ctx: HarnessContext): GuardrailResult {
 | ID | Evaluator | Pass criteria | Fail action |
 |----|-----------|---------------|-------------|
 | CP0 | Deterministic (Zod + evidence rule) | ≥1 segment with persona, channels, rationale; **≥3 distinct evidence source types**; ≥2 non-`client_brief` | Automated retry ladder (product page + expanded search) → `ICP_EVIDENCE_THIN`; low-confidence continue if still thin — **no human** |
-| CP1 | Deterministic | Product value prop, differentiators, tone present | Retry ProductWorker → `PRODUCT_UNCLEAR` |
+| CP1 | Deterministic | `ProductBrief` schema pass; ≥2 differentiators & key messages; value prop & tone ≥20 chars; `risk=low` tone safe; ≥1 key message overlaps primary segment persona/rationale | Retry ProductWorker → `PRODUCT_UNCLEAR` |
 | CP2 | Deterministic | ≥5 candidates across ≥2 platforms (≥3 if single-platform allowlist) | Retry ResearchWorker → `INSUFFICIENT_CANDIDATES` |
 | CP3 | Deterministic | Top 5 each score ≥60/100 | Re-score → `LOW_FIT_SCORES` |
 | CP4 | **LLM evaluator** (harness module, not OutreachWorker) | Professionalism rubric ≥80/100 | OutreachWorker revises → `PROFESSIONALISM_FAIL` after 2 retries |
@@ -697,7 +707,7 @@ Workers **may** call LLMs and tools via `llm.ts` wrapper. They **must not** enfo
 | Worker | LLM role | Tools / data |
 |--------|----------|--------------|
 | **ICPWorker** | Synthesize 1–3 segments with ≥3 source types | `webSearchAdapter` (category + competitor) + `creatorGraphAdapter` + optional `websiteAdapter` |
-| **ProductWorker** | Enrich value props, differentiators, tone | Optional: `websiteAdapter` |
+| **ProductWorker** | Translate client + ICP into `ProductBrief`; reframe on misaligned audience | ICP evidence snippets (read-only); optional `websiteAdapter` if no page evidence |
 | **ResearchWorker** | Translate ICP → API query; synthesize candidates | `influencersClubAdapter`, `seedAdapter`, optional `webAdapter` |
 | **ScoreWorker** | Apply rubric; output ranked list with rationales | Reads `CreatorCandidates` + `ProductBrief` + `ICPProposal` |
 | **OutreachWorker** | Draft personalized messages per creator | Reads `RankedShortlist`; optional IG voice summary |
