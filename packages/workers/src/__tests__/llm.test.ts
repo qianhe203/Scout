@@ -158,4 +158,40 @@ describe("OpenAILLMProvider", () => {
     expect(result.content).toBe('{"ok":true}');
     expect(result.usage).toEqual({ input_tokens: 90, output_tokens: 10 });
   });
+
+  it("uses OPENAI_API_BASE for OpenAI-compatible endpoints", async () => {
+    const fetchImpl = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        model: "qwen3-coder",
+        choices: [{ message: { content: '{"ok":true}' } }],
+        usage: { prompt_tokens: 10, completion_tokens: 5 },
+      }),
+    });
+
+    const provider = new OpenAILLMProvider(
+      "test-key",
+      fetchImpl,
+      "http://10.10.2.113:4000/v1",
+    );
+    await provider.complete({
+      model: "qwen3-coder",
+      messages: [{ role: "user", content: "hello" }],
+      purpose: "icp_synthesis",
+    });
+
+    expect(fetchImpl).toHaveBeenCalledWith(
+      "http://10.10.2.113:4000/v1/chat/completions",
+      expect.any(Object),
+    );
+  });
+
+  it("wires OPENAI_API_BASE from env in createProviderFromEnv", () => {
+    const provider = createProviderFromEnv({
+      LLM_PROVIDER: "openai",
+      OPENAI_API_KEY: "test-key",
+      OPENAI_API_BASE: "http://10.10.2.113:4000/v1",
+    });
+    expect(provider).toBeInstanceOf(OpenAILLMProvider);
+  });
 });

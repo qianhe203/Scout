@@ -6,6 +6,13 @@ import type { WebSearchAdapter } from "./adapters/web-search.js";
 import type { WebsiteAdapter } from "./adapters/website.js";
 import { callLLM, type LLMProvider } from "./llm.js";
 import { createProviderFromEnv } from "./llm-provider.js";
+import {
+  enrichIcpProposal,
+  formatZodError,
+  icpProposalExample,
+  normalizeIcpRaw,
+} from "./icp-normalize.js";
+import { extractJson } from "./utils/json.js";
 
 export interface ResearchEvidence {
   source: EvidenceSource;
@@ -199,36 +206,29 @@ export async function collectIcpResearch(
   return evidence;
 }
 
-function extractJson(content: string): string {
-  const fenced = content.match(/```(?:json)?\s*([\s\S]*?)```/);
-  if (fenced?.[1]) return fenced[1].trim();
-  const start = content.indexOf("{");
-  const end = content.lastIndexOf("}");
-  if (start >= 0 && end > start) {
-    return content.slice(start, end + 1);
-  }
-  return content.trim();
-}
-
 function buildSynthesisPrompt(
   brief: ClientBrief,
   evidence: ResearchEvidence[],
   retryPass: number,
 ): string {
   const lowConfidence = retryPass >= 3;
+  const example = icpProposalExample(retryPass);
   return [
     "You are ICPWorker for Scout. Synthesize an ICPProposal JSON object from independent research evidence.",
     "Rules:",
-    "- Propose 1-3 audience segments grounded in evidence, not client claims alone.",
-    "- Each segment needs persona, demographics, channels, rationale, confidence, and evidence[] citing sources.",
-    "- evidenceSourceTypes must list distinct source types present across the proposal.",
-    "- Require at least 3 distinct evidence source types with at least 2 non-client_brief types when evidence supports it.",
-    "- Compare client targetAudience (if any) and set clientAlignment to confirmed|contradicted|partial|no_client_input.",
-    "- recommendedPrimarySegment indexes segments (0-based).",
+    "- Return a single JSON object with EXACTLY these top-level keys: segments, clientAlignment, recommendedPrimarySegment, evidenceSourceTypes, icpRetryPasses.",
+    "- segments is a non-empty array; each item needs persona, demographics, channels, rationale, confidence, evidence.",
+    "- evidenceSourceTypes lists distinct source type strings used across segments (e.g. web_search_category, web_search_competitor, creator_graph).",
+    "- clientAlignment must be one of: confirmed, contradicted, partial, no_client_input.",
+    "- recommendedPrimarySegment is a 0-based index into segments.",
     `- icpRetryPasses must be ${retryPass}.`,
+    "- Do not wrap the object in another key. Do not add markdown.",
     lowConfidence
       ? "- All segments should use confidence low because evidence is thin after retries."
       : "",
+    "",
+    "Example output shape (fill with research-backed content):",
+    JSON.stringify(example, null, 2),
     "",
     "ClientBrief:",
     JSON.stringify(brief, null, 2),
@@ -236,7 +236,7 @@ function buildSynthesisPrompt(
     "Research evidence:",
     JSON.stringify(evidence, null, 2),
     "",
-    "Return ONLY valid JSON matching ICPProposal schema.",
+    "Return ONLY the JSON object matching the example shape.",
   ]
     .filter(Boolean)
     .join("\n");
@@ -282,35 +282,41 @@ export class ICPWorker {
 
     const prompt = buildSynthesisPrompt(ctx.clientBrief, evidence, retryPass);
     let lastError: Error | null = null;
+    let lastZodDetails = "";
 
-    for (let attempt = 0; attempt < 2; attempt++) {
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const revisionHint =
+        attempt === 0
+          ? ""
+          : `\n\nPrevious output failed validation:\n${lastZodDetails}\nReturn ONLY a corrected JSON object with all required top-level keys.`;
+
       const result = await callLLM({
         runId: ctx.runId,
         stage: "icp",
         worker: this.name,
-        purpose: attempt === 0 ? "icp_synthesis" : "icp_synthesis_retry",
+        purpose:
+          attempt === 0 ? "icp_synthesis" : `icp_synthesis_retry_${attempt}`,
         model: this.model,
         messages: [
           {
             role: "user",
-            content:
-              attempt === 0
-                ? prompt
-                : `${prompt}\n\nPrevious output was invalid JSON. Return ONLY valid JSON.`,
+            content: `${prompt}${revisionHint}`,
           },
         ],
         provider: this.provider,
       });
 
       try {
-        const parsed = JSON.parse(extractJson(result.content)) as ICPProposal;
-        parsed.icpRetryPasses = retryPass;
-        if (!parsed.clientStatedAudience && ctx.clientBrief.targetAudience) {
-          parsed.clientStatedAudience = ctx.clientBrief.targetAudience;
-        }
-        const validated = ICPProposalSchema.parse(parsed);
+        const rawJson = JSON.parse(extractJson(result.content)) as unknown;
+        const normalized = enrichIcpProposal(
+          normalizeIcpRaw(rawJson) as Record<string, unknown>,
+          retryPass,
+          ctx.clientBrief.targetAudience,
+        );
+        const validated = ICPProposalSchema.parse(normalized);
         return validated;
       } catch (error) {
+        lastZodDetails = formatZodError(error);
         lastError = error instanceof Error ? error : new Error(String(error));
       }
     }

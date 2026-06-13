@@ -7,10 +7,16 @@ interface OpenAIChatResponse {
   error?: { message?: string };
 }
 
+function chatCompletionsUrl(baseUrl?: string): string {
+  const base = (baseUrl ?? "https://api.openai.com/v1").replace(/\/$/, "");
+  return `${base}/chat/completions`;
+}
+
 export class OpenAILLMProvider implements LLMProvider {
   constructor(
     private readonly apiKey: string,
     private readonly fetchImpl: typeof fetch = fetch,
+    private readonly baseUrl?: string,
   ) {}
 
   async complete(opts: {
@@ -19,7 +25,7 @@ export class OpenAILLMProvider implements LLMProvider {
     purpose: string;
   }): Promise<LLMResult> {
     const response = await this.fetchImpl(
-      "https://api.openai.com/v1/chat/completions",
+      chatCompletionsUrl(this.baseUrl),
       {
         method: "POST",
         headers: {
@@ -29,6 +35,9 @@ export class OpenAILLMProvider implements LLMProvider {
         body: JSON.stringify({
           model: opts.model,
           messages: opts.messages,
+          ...(process.env.OPENAI_JSON_MODE === "true"
+            ? { response_format: { type: "json_object" } }
+            : {}),
         }),
       },
     );

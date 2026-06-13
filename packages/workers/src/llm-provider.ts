@@ -23,6 +23,7 @@ export class MockLLMProvider implements LLMProvider {
 
 export function createProviderFromEnv(
   env: NodeJS.ProcessEnv = process.env,
+  fetchImpl: typeof fetch = fetch,
 ): LLMProvider {
   const provider = env.LLM_PROVIDER ?? "mock";
 
@@ -43,7 +44,8 @@ export function createProviderFromEnv(
     if (!apiKey) {
       throw new Error("OPENAI_API_KEY is required when LLM_PROVIDER=openai");
     }
-    return new OpenAILLMProvider(apiKey);
+    const baseUrl = env.OPENAI_API_BASE?.trim() || undefined;
+    return new OpenAILLMProvider(apiKey, fetchImpl, baseUrl);
   }
 
   throw new Error(
