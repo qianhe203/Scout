@@ -1,6 +1,6 @@
 # Scout
 
-An AI harness for creator discovery and evaluation — built for the [Fired Festival](https://fired-festival.com/harness) 24-hour Build Challenge.
+An AI harness for creator discovery and evaluation
 
 > **Workers do tasks. The harness enforces constraints.**
 
